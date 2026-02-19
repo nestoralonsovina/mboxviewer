@@ -138,12 +138,13 @@
             </button>
           }
         </div>
-        @if (searchValue && mbox.searchResultsCount() !== null) {
+        @let resultsCount = mbox.searchResultsCount();
+        @if (searchValue && resultsCount !== null) {
           <span class="search-results-count">
-            @if (mbox.searchResultsCount()! > mbox.emails().length) {
-              {{ mbox.emails().length }} of {{ mbox.searchResultsCount() }} results
+            @if (resultsCount > mbox.emails().length) {
+              {{ mbox.emails().length }} of {{ resultsCount }} results
             } @else {
-              {{ mbox.searchResultsCount() }} results
+              {{ resultsCount }} results
             }
           </span>
         }
@@ -212,7 +213,8 @@
         </div>
 
         <!-- Email Detail -->
-        @if (mbox.selectedEmail()) {
+        @let email = mbox.selectedEmail();
+        @if (email) {
           <div class="email-detail">
             <div class="detail-header">
               <button class="btn-back" (click)="onCloseEmail()">
@@ -225,24 +227,24 @@
             </div>
 
             <div class="detail-content">
-              <h2 class="detail-subject">{{ mbox.selectedEmail()?.subject || '(No subject)' }}</h2>
+              <h2 class="detail-subject">{{ email.subject || '(No subject)' }}</h2>
               
               <div class="detail-meta">
                 <div class="meta-row">
                   <span class="meta-label">From:</span>
                   <span class="meta-value">
-                    @if (mbox.selectedEmail()?.from_name) {
-                      {{ mbox.selectedEmail()?.from_name }} &lt;{{ mbox.selectedEmail()?.from_address }}&gt;
+                    @if (email.from_name) {
+                      {{ email.from_name }} &lt;{{ email.from_address }}&gt;
                     } @else {
-                      {{ mbox.selectedEmail()?.from_address }}
+                      {{ email.from_address }}
                     }
                   </span>
                 </div>
-                @if (mbox.selectedEmail()?.to && mbox.selectedEmail()!.to.length > 0) {
+                @if (email.to.length > 0) {
                   <div class="meta-row">
                     <span class="meta-label">To:</span>
                     <span class="meta-value">
-                      @for (to of mbox.selectedEmail()?.to; track to.address; let last = $last) {
+                      @for (to of email.to; track to.address; let last = $last) {
                         @if (to.name) {
                           {{ to.name }} &lt;{{ to.address }}&gt;
                         } @else {
@@ -255,13 +257,13 @@
                 }
                 <div class="meta-row">
                   <span class="meta-label">Date:</span>
-                  <span class="meta-value">{{ mbox.formatDate(mbox.selectedEmail()!.date) }}</span>
+                  <span class="meta-value">{{ mbox.formatDate(email.date) }}</span>
                 </div>
-                @if (mbox.selectedEmail()?.labels && mbox.selectedEmail()!.labels.length > 0) {
+                @if (email.labels.length > 0) {
                   <div class="meta-row">
                     <span class="meta-label">Labels:</span>
                     <span class="meta-value labels">
-                      @for (label of mbox.selectedEmail()?.labels; track label) {
+                      @for (label of email.labels; track label) {
                         <span class="label-tag">{{ label }}</span>
                       }
                     </span>
@@ -270,16 +272,17 @@
               </div>
 
               <!-- Attachments -->
-              @if (mbox.selectedEmailBody()?.attachments && mbox.selectedEmailBody()!.attachments.length > 0) {
+              @let body = mbox.selectedEmailBody();
+              @if (body && body.attachments.length > 0) {
                 <div class="attachments-section">
                   <h3>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
                     </svg>
-                    Attachments ({{ mbox.selectedEmailBody()!.attachments.length }})
+                    Attachments ({{ body.attachments.length }})
                   </h3>
                   <div class="attachments-list">
-                    @for (attachment of mbox.selectedEmailBody()?.attachments; track attachment.part_index) {
+                    @for (attachment of body.attachments; track attachment.part_index) {
                       <button class="attachment-item" (click)="onDownloadAttachment(attachment)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -302,19 +305,25 @@
 
               <!-- Email Body -->
               <div class="email-body">
-                @if (mbox.isLoading() && !mbox.selectedEmailBody()) {
+                @if (mbox.isLoading() && !body) {
                   <div class="loading-state">
                     <span class="spinner"></span>
                     Loading email content...
                   </div>
-                } @else if (mbox.selectedEmailBody()?.html) {
-                  <iframe 
-                    class="email-iframe"
-                    [srcdoc]="mbox.selectedEmailBody()?.html"
-                    sandbox="allow-same-origin">
-                  </iframe>
-                } @else if (mbox.selectedEmailBody()?.text) {
-                  <pre class="email-text">{{ mbox.selectedEmailBody()?.text }}</pre>
+                } @else if (body) {
+                  @if (body.html) {
+                    <iframe 
+                      class="email-iframe"
+                      [srcdoc]="body.html"
+                      sandbox="allow-same-origin">
+                    </iframe>
+                  } @else if (body.text) {
+                    <pre class="email-text">{{ body.text }}</pre>
+                  } @else {
+                    <div class="empty-body">
+                      <p>No content available</p>
+                    </div>
+                  }
                 } @else {
                   <div class="empty-body">
                     <p>No content available</p>

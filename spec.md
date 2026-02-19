@@ -45,7 +45,7 @@ No UI changes. Fix type safety, add tooling, remove dead code.
 - Update the `[value]` binding to also use the ref or a signal.
 
 ### 1.4 Fix `!` non-null assertions in template
-- [ ] done
+- [x] done
 - File: `src/app/app.component.html`, lines 142, 240, 257, 259, 272, 278.
 - Use `@let` to capture values at the top of each block:
   ```html
