@@ -82,7 +82,7 @@ No UI changes. Fix type safety, add tooling, remove dead code.
 - Write a first smoke test for one of the pure utility functions (added in Phase 2).
 
 ### 1.7 Remove dead code and fix metadata
-- [ ] done
+- [x] done
 - Remove `@tauri-apps/plugin-opener` from `package.json` (unused in frontend).
 - Remove `src/assets/tauri.svg` and `src/assets/angular.svg` (scaffold remnants).
 - Change `<title>` in `src/index.html` from "Tauri + Angular" to "MBOX Viewer".
