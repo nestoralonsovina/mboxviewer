@@ -8,17 +8,17 @@ import { ErrorToastComponent } from './shared/components/error-toast/error-toast
 import { WelcomeComponent } from './features/welcome/welcome.component';
 import { SidebarComponent } from './features/mail/sidebar/sidebar.component';
 import { SearchToolbarComponent } from './features/mail/toolbar/search-toolbar.component';
+import { EmailListComponent } from './features/mail/email-list/email-list.component';
 import {
   formatDate as formatDateUtil,
   formatFileSize as formatFileSizeUtil,
-  formatSender as formatSenderUtil,
 } from './core/utils/format';
 import type { AttachmentInfo, EmailEntry } from './core/models/mbox.models';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, SpinnerComponent, ErrorToastComponent, WelcomeComponent, SidebarComponent, SearchToolbarComponent],
+  imports: [CommonModule, FormsModule, IconComponent, SpinnerComponent, ErrorToastComponent, WelcomeComponent, SidebarComponent, SearchToolbarComponent, EmailListComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -78,9 +78,5 @@ export class AppComponent {
 
   formatFileSize(bytes: number): string {
     return formatFileSizeUtil(bytes);
-  }
-
-  formatSender(email: EmailEntry): string {
-    return formatSenderUtil(email);
   }
 }

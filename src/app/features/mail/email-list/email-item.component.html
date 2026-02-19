@@ -1,0 +1,27 @@
+<div
+  class="email-item"
+  [class.selected]="selected()"
+  [class.has-attachment]="email().has_attachments"
+  role="button"
+  tabindex="0"
+  (click)="onClick()"
+  (keydown.enter)="onClick()">
+  <div class="email-sender">{{ senderDisplay }}</div>
+  <div class="email-subject">
+    @if (email().has_attachments) {
+      <app-icon name="attachment" [size]="14" class="attachment-icon" />
+    }
+    {{ email().subject || '(No subject)' }}
+  </div>
+  <div class="email-date">{{ dateDisplay }}</div>
+  @if (email().labels.length > 0) {
+    <div class="email-labels">
+      @for (label of email().labels.slice(0, 3); track label) {
+        <span class="label-tag">{{ label }}</span>
+      }
+      @if (email().labels.length > 3) {
+        <span class="label-more">+{{ email().labels.length - 3 }}</span>
+      }
+    </div>
+  }
+</div>

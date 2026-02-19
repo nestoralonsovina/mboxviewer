@@ -1,0 +1,31 @@
+@if (searchQuery()) {
+  <div class="list-header">
+    Search results for "{{ searchQuery() }}" ({{ emails().length }} found)
+  </div>
+}
+@if (selectedLabel()) {
+  <div class="list-header">
+    {{ selectedLabel() }} ({{ emails().length }} emails)
+  </div>
+}
+
+@if (isLoading() && emails().length === 0) {
+  <div class="loading-state">
+    <app-spinner />
+    Loading emails...
+  </div>
+}
+
+@for (email of emails(); track email.index) {
+  <app-email-item
+    [email]="email"
+    [selected]="isSelected(email)"
+    (emailClick)="onEmailClick($event)" />
+}
+
+@if (!isLoading() && emails().length === 0) {
+  <div class="empty-state">
+    <app-icon name="mail" [size]="48" [strokeWidth]="1.5" />
+    <p>No emails found</p>
+  </div>
+}

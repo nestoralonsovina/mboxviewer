@@ -212,7 +212,7 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 - Move CSS: `.toolbar`, `.search-*`.
 
 ### 3.7 Extract `features/mail/email-list/`
-- [ ] done
+- [x] done
 - Create `EmailListComponent` — the scrollable list container.
 - Create `EmailItemComponent` — a single email row.
 - Inputs: `emails`, `selectedEmail`, `isLoading`, `searchQuery`, `selectedLabel`.

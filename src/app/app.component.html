@@ -35,62 +35,15 @@
       <!-- Content Area -->
       <div class="content-area">
         <!-- Email List -->
-        <div class="email-list" [class.has-selection]="mbox.selectedEmail()">
-          @if (mbox.searchQuery()) {
-            <div class="list-header">
-              Search results for "{{ mbox.searchQuery() }}" ({{ mbox.emails().length }} found)
-            </div>
-          }
-          @if (mbox.selectedLabel()) {
-            <div class="list-header">
-              {{ mbox.selectedLabel() }} ({{ mbox.emails().length }} emails)
-            </div>
-          }
-
-          @if ((mbox.loadingFile() || mbox.loadingEmails()) && mbox.emails().length === 0) {
-            <div class="loading-state">
-              <app-spinner />
-              Loading emails...
-            </div>
-          }
-
-          @for (email of mbox.emails(); track email.index) {
-            <div 
-              class="email-item" 
-              [class.selected]="mbox.selectedEmail()?.index === email.index"
-              [class.has-attachment]="email.has_attachments"
-              role="button"
-              tabindex="0"
-              (click)="onEmailClick(email)"
-              (keydown.enter)="onEmailClick(email)">
-              <div class="email-sender">{{ formatSender(email) }}</div>
-              <div class="email-subject">
-                @if (email.has_attachments) {
-                  <app-icon name="attachment" [size]="14" class="attachment-icon" />
-                }
-                {{ email.subject || '(No subject)' }}
-              </div>
-              <div class="email-date">{{ formatDate(email.date) }}</div>
-              @if (email.labels.length > 0) {
-                <div class="email-labels">
-                  @for (label of email.labels.slice(0, 3); track label) {
-                    <span class="label-tag">{{ label }}</span>
-                  }
-                  @if (email.labels.length > 3) {
-                    <span class="label-more">+{{ email.labels.length - 3 }}</span>
-                  }
-                </div>
-              }
-            </div>
-          }
-
-          @if (!mbox.loadingFile() && !mbox.loadingEmails() && mbox.emails().length === 0) {
-            <div class="empty-state">
-              <app-icon name="mail" [size]="48" [strokeWidth]="1.5" />
-              <p>No emails found</p>
-            </div>
-          }
-        </div>
+        <app-email-list
+          class="email-list"
+          [class.has-selection]="mbox.selectedEmail()"
+          [emails]="mbox.emails()"
+          [selectedEmail]="mbox.selectedEmail()"
+          [isLoading]="mbox.loadingFile() || mbox.loadingEmails()"
+          [searchQuery]="mbox.searchQuery()"
+          [selectedLabel]="mbox.selectedLabel()"
+          (emailClick)="onEmailClick($event)" />
 
         <!-- Email Detail -->
         @let email = mbox.selectedEmail();
