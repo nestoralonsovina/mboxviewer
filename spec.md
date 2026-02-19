@@ -194,7 +194,7 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 - Move CSS: `.welcome-*`, `.recent-*`, `.loading-indicator`.
 
 ### 3.5 Extract `features/mail/sidebar/`
-- [ ] done
+- [x] done
 - Create `SidebarComponent` — container.
 - Create `SidebarStatsComponent` — shows email count and attachment count.
 - Create `LabelNavComponent` — label navigation list.

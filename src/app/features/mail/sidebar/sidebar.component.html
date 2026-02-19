@@ -1,0 +1,20 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <button class="btn-icon" (click)="openFile.emit()" title="Open another file">
+      <app-icon name="folder" [size]="18" />
+    </button>
+    <span class="file-name" [title]="currentPath() ?? ''">{{ formatFileName(currentPath()) }}</span>
+    <button class="btn-icon" (click)="closeFile.emit()" title="Close file">
+      <app-icon name="close" [size]="18" />
+    </button>
+  </div>
+
+  <app-sidebar-stats [stats]="stats()" />
+
+  <app-label-nav
+    [labels]="labels()"
+    [selectedLabel]="selectedLabel()"
+    [searchQuery]="searchQuery()"
+    [totalMessages]="totalMessages"
+    (labelClick)="labelClick.emit($event)" />
+</aside>

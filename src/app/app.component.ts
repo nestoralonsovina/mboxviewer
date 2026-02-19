@@ -6,8 +6,8 @@ import { IconComponent } from './shared/components/icon/icon.component';
 import { SpinnerComponent } from './shared/components/spinner/spinner.component';
 import { ErrorToastComponent } from './shared/components/error-toast/error-toast.component';
 import { WelcomeComponent } from './features/welcome/welcome.component';
+import { SidebarComponent } from './features/mail/sidebar/sidebar.component';
 import {
-  getFileName as getFileNameUtil,
   formatDate as formatDateUtil,
   formatFileSize as formatFileSizeUtil,
   formatSender as formatSenderUtil,
@@ -17,7 +17,7 @@ import type { AttachmentInfo, EmailEntry } from './core/models/mbox.models';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, SpinnerComponent, ErrorToastComponent, WelcomeComponent],
+  imports: [CommonModule, FormsModule, IconComponent, SpinnerComponent, ErrorToastComponent, WelcomeComponent, SidebarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -73,10 +73,6 @@ export class AppComponent {
 
   async onRemoveRecentFile(path: string) {
     await this.mbox.removeFromRecentFiles(path);
-  }
-
-  getFileName(path: string | null): string {
-    return getFileNameUtil(path);
   }
 
   formatDate(dateStr: string): string {
