@@ -1,0 +1,26 @@
+<div class="email-detail">
+  <div class="detail-header">
+    <button class="btn-back" (click)="onClose()">
+      <app-icon name="arrow-left" [size]="20" />
+      Back
+    </button>
+  </div>
+
+  <div class="detail-content">
+    @let currentEmail = email();
+    <h2 class="detail-subject">{{ currentEmail.subject || '(No subject)' }}</h2>
+
+    <app-email-meta [email]="currentEmail" />
+
+    @let body = emailBody();
+    @if (body) {
+      <app-attachments-list
+        [attachments]="body.attachments"
+        (downloadAttachment)="onDownloadAttachment($event)" />
+    }
+
+    <app-email-body
+      [body]="body"
+      [isLoading]="isLoading()" />
+  </div>
+</div>

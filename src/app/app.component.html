@@ -48,111 +48,12 @@
         <!-- Email Detail -->
         @let email = mbox.selectedEmail();
         @if (email) {
-          <div class="email-detail">
-            <div class="detail-header">
-              <button class="btn-back" (click)="onCloseEmail()">
-                <app-icon name="arrow-left" [size]="20" />
-                Back
-              </button>
-            </div>
-
-            <div class="detail-content">
-              <h2 class="detail-subject">{{ email.subject || '(No subject)' }}</h2>
-              
-              <div class="detail-meta">
-                <div class="meta-row">
-                  <span class="meta-label">From:</span>
-                  <span class="meta-value">
-                    @if (email.from_name) {
-                      {{ email.from_name }} &lt;{{ email.from_address }}&gt;
-                    } @else {
-                      {{ email.from_address }}
-                    }
-                  </span>
-                </div>
-                @if (email.to.length > 0) {
-                  <div class="meta-row">
-                    <span class="meta-label">To:</span>
-                    <span class="meta-value">
-                      @for (to of email.to; track to.address; let last = $last) {
-                        @if (to.name) {
-                          {{ to.name }} &lt;{{ to.address }}&gt;
-                        } @else {
-                          {{ to.address }}
-                        }
-                        @if (!last) {, }
-                      }
-                    </span>
-                  </div>
-                }
-                <div class="meta-row">
-                  <span class="meta-label">Date:</span>
-                  <span class="meta-value">{{ formatDate(email.date) }}</span>
-                </div>
-                @if (email.labels.length > 0) {
-                  <div class="meta-row">
-                    <span class="meta-label">Labels:</span>
-                    <span class="meta-value labels">
-                      @for (label of email.labels; track label) {
-                        <span class="label-tag">{{ label }}</span>
-                      }
-                    </span>
-                  </div>
-                }
-              </div>
-
-              <!-- Attachments -->
-              @let body = mbox.selectedEmailBody();
-              @if (body && body.attachments.length > 0) {
-                <div class="attachments-section">
-                  <h3>
-                    <app-icon name="attachment" />
-                    Attachments ({{ body.attachments.length }})
-                  </h3>
-                  <div class="attachments-list">
-                    @for (attachment of body.attachments; track attachment.part_index) {
-                      <button class="attachment-item" (click)="onDownloadAttachment(attachment)">
-                        <app-icon name="file" [size]="20" />
-                        <div class="attachment-info">
-                          <span class="attachment-name">{{ attachment.filename }}</span>
-                          <span class="attachment-size">{{ formatFileSize(attachment.size) }}</span>
-                        </div>
-                        <app-icon name="download" class="download-icon" />
-                      </button>
-                    }
-                  </div>
-                </div>
-              }
-
-              <!-- Email Body -->
-              <div class="email-body">
-                @if (mbox.loadingEmailBody() && !body) {
-                  <div class="loading-state">
-                    <app-spinner />
-                    Loading email content...
-                  </div>
-                } @else if (body) {
-                  @if (body.html) {
-                    <iframe 
-                      class="email-iframe"
-                      [srcdoc]="body.html"
-                      sandbox="allow-same-origin">
-                    </iframe>
-                  } @else if (body.text) {
-                    <pre class="email-text">{{ body.text }}</pre>
-                  } @else {
-                    <div class="empty-body">
-                      <p>No content available</p>
-                    </div>
-                  }
-                } @else {
-                  <div class="empty-body">
-                    <p>No content available</p>
-                  </div>
-                }
-              </div>
-            </div>
-          </div>
+          <app-email-detail
+            [email]="email"
+            [emailBody]="mbox.selectedEmailBody()"
+            [isLoading]="mbox.loadingEmailBody()"
+            (closeDetail)="onCloseEmail()"
+            (downloadAttachment)="onDownloadAttachment($event)" />
         }
       </div>
     </main>

@@ -220,7 +220,7 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 - Move CSS: `.email-list`, `.email-item*`, `.email-sender`, `.email-subject`, `.email-date`, `.email-labels`, `.label-tag`, `.list-header`.
 
 ### 3.8 Extract `features/mail/email-detail/`
-- [ ] done
+- [x] done
 - Create `EmailDetailComponent` — container for the detail view.
 - Create `EmailMetaComponent` — from/to/date/labels metadata block.
 - Create `EmailBodyComponent` — iframe/text rendering.
