@@ -258,21 +258,6 @@
   background: var(--bg-tertiary);
 }
 
-/* Spinner */
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.75s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 /* App Layout */
 .app-layout {
   display: flex;
@@ -423,12 +408,6 @@
 
 .search-box.searching {
   border-color: var(--accent-color);
-}
-
-.search-spinner {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
 }
 
 .search-results-count {

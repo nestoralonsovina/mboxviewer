@@ -173,7 +173,7 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 - This alone cuts ~100 lines from the template.
 
 ### 3.2 Extract `shared/components/spinner/`
-- [ ] done
+- [x] done
 - Create `SpinnerComponent` — the reusable loading spinner.
 - Input: `size` (optional, default `16`).
 - Replace all `<span class="spinner">` instances.

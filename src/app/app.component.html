@@ -10,7 +10,7 @@
       
       @if (mbox.loadingFile()) {
         <div class="loading-indicator">
-          <span class="spinner"></span>
+          <app-spinner />
           <span>Loading...</span>
         </div>
       } @else {
@@ -97,7 +97,7 @@
       <div class="toolbar">
         <div class="search-box" [class.searching]="mbox.isSearching()">
           @if (mbox.isSearching()) {
-            <span class="spinner search-spinner"></span>
+            <app-spinner [size]="18" />
           } @else {
             <app-icon name="search" [size]="18" />
           }
@@ -142,7 +142,7 @@
 
           @if ((mbox.loadingFile() || mbox.loadingEmails()) && mbox.emails().length === 0) {
             <div class="loading-state">
-              <span class="spinner"></span>
+              <app-spinner />
               Loading emails...
             </div>
           }
@@ -268,7 +268,7 @@
               <div class="email-body">
                 @if (mbox.loadingEmailBody() && !body) {
                   <div class="loading-state">
-                    <span class="spinner"></span>
+                    <app-spinner />
                     Loading email content...
                   </div>
                 } @else if (body) {
