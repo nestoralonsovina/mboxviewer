@@ -1,40 +1,8 @@
-/* Variables */
 :host {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #e9ecef;
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --text-muted: #adb5bd;
-  --border-color: #dee2e6;
-  --accent-color: #0d6efd;
-  --accent-hover: #0b5ed7;
-  --danger-color: #dc3545;
-  --success-color: #198754;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --transition: 150ms ease;
-
   display: block;
   height: 100vh;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
   color: var(--text-primary);
   background: var(--bg-secondary);
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :host {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #242424;
-    --bg-tertiary: #2f2f2f;
-    --text-primary: #f0f0f0;
-    --text-secondary: #a0a0a0;
-    --text-muted: #6c6c6c;
-    --border-color: #3a3a3a;
-  }
 }

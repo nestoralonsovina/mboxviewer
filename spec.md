@@ -235,7 +235,7 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 - `AppComponent` becomes a thin shell: just `@if (mbox.isFileOpen()) { <app-mail-shell /> } @else { <app-welcome /> }` + `<app-error-toast>`.
 
 ### 3.10 Promote CSS variables to `:root`
-- [ ] done
+- [x] done
 - Move CSS custom properties from `:host` of the old `AppComponent` to `:root` in `src/styles.css`.
 - Include the dark mode overrides.
 - All child components now inherit the theme tokens without needing to redeclare them.
