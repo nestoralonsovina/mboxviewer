@@ -1,9 +1,16 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { writeFile } from '@tauri-apps/plugin-fs';
+import { load, Store } from '@tauri-apps/plugin-store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+export interface RecentFile {
+  path: string;
+  name: string;
+  lastOpened: string;
+}
 
 export interface EmailAddress {
   name: string;
@@ -54,6 +61,10 @@ export interface SearchResults {
   total_count: number;
 }
 
+const STORE_FILE = 'settings.json';
+const RECENT_FILES_KEY = 'recentFiles';
+const MAX_RECENT_FILES = 10;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -61,6 +72,7 @@ export class MboxService {
   // Signals for reactive state management
   private _isLoading = signal(false);
   private _isSearching = signal(false);
+  private _isInitialized = signal(false);
   private _stats = signal<MboxStats | null>(null);
   private _emails = signal<EmailEntry[]>([]);
   private _searchResultsCount = signal<number | null>(null);
@@ -70,16 +82,21 @@ export class MboxService {
   private _selectedLabel = signal<string | null>(null);
   private _currentPath = signal<string | null>(null);
   private _error = signal<string | null>(null);
+  private _recentFiles = signal<RecentFile[]>([]);
 
   // Debounced search subject
   private searchSubject = new Subject<string>();
   
   // Track current search to cancel outdated searches
   private currentSearchId = 0;
+  
+  // Store instance
+  private store: Store | null = null;
 
   // Public readonly signals
   readonly isLoading = this._isLoading.asReadonly();
   readonly isSearching = this._isSearching.asReadonly();
+  readonly isInitialized = this._isInitialized.asReadonly();
   readonly stats = this._stats.asReadonly();
   readonly emails = this._emails.asReadonly();
   readonly searchResultsCount = this._searchResultsCount.asReadonly();
@@ -89,6 +106,7 @@ export class MboxService {
   readonly selectedLabel = this._selectedLabel.asReadonly();
   readonly currentPath = this._currentPath.asReadonly();
   readonly error = this._error.asReadonly();
+  readonly recentFiles = this._recentFiles.asReadonly();
 
   // Computed signals
   readonly isFileOpen = computed(() => this._stats() !== null);
@@ -102,6 +120,57 @@ export class MboxService {
     ).subscribe(query => {
       this.executeSearch(query);
     });
+    
+    // Initialize store and auto-load last file
+    this.initialize();
+  }
+
+  private async initialize(): Promise<void> {
+    try {
+      this.store = await load(STORE_FILE);
+      
+      // Load recent files
+      const recentFiles = await this.store.get<RecentFile[]>(RECENT_FILES_KEY);
+      if (recentFiles && recentFiles.length > 0) {
+        this._recentFiles.set(recentFiles);
+        
+        // Auto-open the most recent file
+        const lastFile = recentFiles[0];
+        await this.loadMbox(lastFile.path);
+      }
+    } catch (err) {
+      console.error('Failed to initialize store:', err);
+    } finally {
+      this._isInitialized.set(true);
+    }
+  }
+
+  private async addToRecentFiles(path: string): Promise<void> {
+    const name = path.split('/').pop() || path.split('\\').pop() || path;
+    const newEntry: RecentFile = {
+      path,
+      name,
+      lastOpened: new Date().toISOString()
+    };
+
+    // Remove existing entry for this path and add to front
+    const existing = this._recentFiles().filter(f => f.path !== path);
+    const updated = [newEntry, ...existing].slice(0, MAX_RECENT_FILES);
+    
+    this._recentFiles.set(updated);
+    
+    if (this.store) {
+      await this.store.set(RECENT_FILES_KEY, updated);
+    }
+  }
+
+  async removeFromRecentFiles(path: string): Promise<void> {
+    const updated = this._recentFiles().filter(f => f.path !== path);
+    this._recentFiles.set(updated);
+    
+    if (this.store) {
+      await this.store.set(RECENT_FILES_KEY, updated);
+    }
   }
 
   async openFile(): Promise<void> {
@@ -131,11 +200,16 @@ export class MboxService {
       this._stats.set(stats);
       this._currentPath.set(path);
       
+      // Save to recent files
+      await this.addToRecentFiles(path);
+      
       // Load initial emails
       await this.loadEmails();
     } catch (err) {
       this._error.set(`Failed to open MBOX: ${err}`);
       this._stats.set(null);
+      // Remove from recent files if it failed to open
+      await this.removeFromRecentFiles(path);
     } finally {
       this._isLoading.set(false);
     }

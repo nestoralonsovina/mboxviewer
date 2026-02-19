@@ -57,8 +57,34 @@ export class AppComponent {
     this.mbox.clearError();
   }
 
+  async onOpenRecentFile(path: string) {
+    await this.mbox.loadMbox(path);
+  }
+
+  async onRemoveRecentFile(path: string, event: Event) {
+    event.stopPropagation();
+    await this.mbox.removeFromRecentFiles(path);
+  }
+
   getFileName(path: string | null): string {
     if (!path) return '';
     return path.split('/').pop() || path.split('\\').pop() || path;
+  }
+
+  formatRecentDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+      return 'Today';
+    } else if (diffDays === 1) {
+      return 'Yesterday';
+    } else if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    } else {
+      return date.toLocaleDateString();
+    }
   }
 }

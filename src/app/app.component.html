@@ -10,14 +10,43 @@
       </div>
       <h1>MBOX Viewer</h1>
       <p>Open Gmail Takeout exports and other MBOX files</p>
-      <button class="btn-primary" (click)="onOpenFile()" [disabled]="mbox.isLoading()">
-        @if (mbox.isLoading()) {
+      
+      @if (mbox.isLoading()) {
+        <div class="loading-indicator">
           <span class="spinner"></span>
-          Loading...
-        } @else {
+          <span>Loading...</span>
+        </div>
+      } @else {
+        <button class="btn-primary" (click)="onOpenFile()">
           Open MBOX File
+        </button>
+        
+        @if (mbox.recentFiles().length > 0) {
+          <div class="recent-files">
+            <h3>Recent Files</h3>
+            <ul class="recent-files-list">
+              @for (file of mbox.recentFiles(); track file.path) {
+                <li class="recent-file-item">
+                  <button class="recent-file-btn" (click)="onOpenRecentFile(file.path)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <span class="recent-file-name">{{ file.name }}</span>
+                    <span class="recent-file-date">{{ formatRecentDate(file.lastOpened) }}</span>
+                  </button>
+                  <button class="recent-file-remove" (click)="onRemoveRecentFile(file.path, $event)" title="Remove from list">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"/>
+                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
         }
-      </button>
+      }
     </div>
   </div>
 }
