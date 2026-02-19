@@ -5,9 +5,9 @@ import { MboxStateService } from './state/mbox-state.service';
 import { IconComponent } from './shared/components/icon/icon.component';
 import { SpinnerComponent } from './shared/components/spinner/spinner.component';
 import { ErrorToastComponent } from './shared/components/error-toast/error-toast.component';
+import { WelcomeComponent } from './features/welcome/welcome.component';
 import {
   getFileName as getFileNameUtil,
-  formatRelativeDate,
   formatDate as formatDateUtil,
   formatFileSize as formatFileSizeUtil,
   formatSender as formatSenderUtil,
@@ -17,7 +17,7 @@ import type { AttachmentInfo, EmailEntry } from './core/models/mbox.models';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, SpinnerComponent, ErrorToastComponent],
+  imports: [CommonModule, FormsModule, IconComponent, SpinnerComponent, ErrorToastComponent, WelcomeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -71,17 +71,12 @@ export class AppComponent {
     await this.mbox.loadMbox(path);
   }
 
-  async onRemoveRecentFile(path: string, event: Event) {
-    event.stopPropagation();
+  async onRemoveRecentFile(path: string) {
     await this.mbox.removeFromRecentFiles(path);
   }
 
   getFileName(path: string | null): string {
     return getFileNameUtil(path);
-  }
-
-  formatRecentDate(dateStr: string): string {
-    return formatRelativeDate(dateStr);
   }
 
   formatDate(dateStr: string): string {

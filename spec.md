@@ -186,7 +186,7 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 - Move the error toast template block (lines 332-342) and its CSS.
 
 ### 3.4 Extract `features/welcome/`
-- [ ] done
+- [x] done
 - Create `WelcomeComponent` — the welcome screen (template lines 1-51).
 - Create `RecentFilesListComponent` — the recent files list within the welcome screen.
 - Inputs: `recentFiles`, `isLoading`.

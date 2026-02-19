@@ -1,0 +1,17 @@
+<div class="recent-files">
+  <h3>Recent Files</h3>
+  <ul class="recent-files-list">
+    @for (file of recentFiles(); track file.path) {
+      <li class="recent-file-item">
+        <button class="recent-file-btn" (click)="openRecent.emit(file.path)">
+          <app-icon name="mail" />
+          <span class="recent-file-name">{{ file.name }}</span>
+          <span class="recent-file-date">{{ formatRecentDate(file.lastOpened) }}</span>
+        </button>
+        <button class="recent-file-remove" (click)="onRemove(file.path, $event)" title="Remove from list">
+          <app-icon name="close" [size]="14" />
+        </button>
+      </li>
+    }
+  </ul>
+</div>

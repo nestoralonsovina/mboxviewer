@@ -1,0 +1,27 @@
+<div class="welcome-screen">
+  <div class="welcome-content">
+    <div class="welcome-icon">
+      <app-icon name="mail" [size]="80" [strokeWidth]="1.5" />
+    </div>
+    <h1>MBOX Viewer</h1>
+    <p>Open Gmail Takeout exports and other MBOX files</p>
+
+    @if (isLoading()) {
+      <div class="loading-indicator">
+        <app-spinner />
+        <span>Loading...</span>
+      </div>
+    } @else {
+      <button class="btn-primary" (click)="openFile.emit()">
+        Open MBOX File
+      </button>
+
+      @if (recentFiles().length > 0) {
+        <app-recent-files-list
+          [recentFiles]="recentFiles()"
+          (openRecent)="openRecent.emit($event)"
+          (removeRecent)="removeRecent.emit($event)" />
+      }
+    }
+  </div>
+</div>
