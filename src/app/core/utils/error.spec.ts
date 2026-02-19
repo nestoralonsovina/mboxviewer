@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { errorMessage } from './mbox.service';
+import { errorMessage } from './error';
 
 describe('errorMessage', () => {
   it('returns message property when given an Error instance', () => {

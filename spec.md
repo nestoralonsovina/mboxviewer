@@ -134,7 +134,7 @@ Split the monolithic service. No UI template changes.
 - Move recent file persistence logic from `MboxService`.
 
 ### 2.4 Refactor `MboxService` into `MboxStateService`
-- [ ] done
+- [x] done
 - Rename file to `src/app/state/mbox-state.service.ts`.
 - Inject `MboxApiService` and `SettingsStoreService`.
 - Remove all `invoke()` calls — delegate to `MboxApiService`.

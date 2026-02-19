@@ -3,13 +3,9 @@ import { open, save } from '@tauri-apps/plugin-dialog';
 import { writeFile } from '@tauri-apps/plugin-fs';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import {
-  formatDate as formatDateUtil,
-  formatFileSize as formatFileSizeUtil,
-  formatSender as formatSenderUtil,
-} from '../core/utils/format';
 import { MboxApiService } from '../core/tauri/mbox-api.service';
 import { SettingsStoreService } from '../core/store/settings-store.service';
+import { errorMessage } from '../core/utils/error';
 import type {
   AttachmentInfo,
   EmailBody,
@@ -18,49 +14,30 @@ import type {
   RecentFile,
 } from '../core/models/mbox.models';
 
-export type {
-  AttachmentInfo,
-  EmailAddress,
-  EmailBody,
-  EmailEntry,
-  LabelCount,
-  MboxStats,
-  RecentFile,
-  SearchResults,
-} from '../core/models/mbox.models';
-
-export function errorMessage(err: unknown): string {
-  if (err instanceof Error) {
-    return err.message;
-  }
-  return String(err);
-}
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class MboxService {
+export class MboxStateService {
   private readonly api = inject(MboxApiService);
   private readonly settingsStore = inject(SettingsStoreService);
 
-  private _isLoading = signal(false);
-  private _isSearching = signal(false);
-  private _isInitialized = signal(false);
-  private _stats = signal<MboxStats | null>(null);
-  private _emails = signal<EmailEntry[]>([]);
-  private _searchResultsCount = signal<number | null>(null);
-  private _selectedEmail = signal<EmailEntry | null>(null);
-  private _selectedEmailBody = signal<EmailBody | null>(null);
-  private _searchQuery = signal('');
-  private _selectedLabel = signal<string | null>(null);
-  private _currentPath = signal<string | null>(null);
-  private _error = signal<string | null>(null);
-  private _recentFiles = signal<RecentFile[]>([]);
+  private readonly _isLoading = signal(false);
+  private readonly _isSearching = signal(false);
+  private readonly _isInitialized = signal(false);
+  private readonly _stats = signal<MboxStats | null>(null);
+  private readonly _emails = signal<EmailEntry[]>([]);
+  private readonly _searchResultsCount = signal<number | null>(null);
+  private readonly _selectedEmail = signal<EmailEntry | null>(null);
+  private readonly _selectedEmailBody = signal<EmailBody | null>(null);
+  private readonly _searchQuery = signal('');
+  private readonly _selectedLabel = signal<string | null>(null);
+  private readonly _currentPath = signal<string | null>(null);
+  private readonly _error = signal<string | null>(null);
+  private readonly _recentFiles = signal<RecentFile[]>([]);
 
-  private searchSubject = new Subject<string>();
+  private readonly searchSubject = new Subject<string>();
   private currentSearchId = 0;
 
-  // Public readonly signals
   readonly isLoading = this._isLoading.asReadonly();
   readonly isSearching = this._isSearching.asReadonly();
   readonly isInitialized = this._isInitialized.asReadonly();
@@ -75,18 +52,16 @@ export class MboxService {
   readonly error = this._error.asReadonly();
   readonly recentFiles = this._recentFiles.asReadonly();
 
-  // Computed signals
   readonly isFileOpen = computed(() => this._stats() !== null);
   readonly labels = computed(() => this._stats()?.labels ?? []);
 
   constructor() {
-    this.searchSubject.pipe(
-      debounceTime(150),
-      distinctUntilChanged()
-    ).subscribe(query => {
-      void this.executeSearch(query);
-    });
-    
+    this.searchSubject
+      .pipe(debounceTime(150), distinctUntilChanged())
+      .subscribe((query) => {
+        void this.executeSearch(query);
+      });
+
     void this.initialize();
   }
 
@@ -95,8 +70,8 @@ export class MboxService {
       await this.settingsStore.initialize();
 
       const recentFiles = await this.settingsStore.getRecentFiles();
+      this._recentFiles.set(recentFiles);
       if (recentFiles.length > 0) {
-        this._recentFiles.set(recentFiles);
         await this.loadMbox(recentFiles[0].path);
       }
     } catch (err) {
@@ -111,10 +86,10 @@ export class MboxService {
     const newEntry: RecentFile = {
       path,
       name,
-      lastOpened: new Date().toISOString()
+      lastOpened: new Date().toISOString(),
     };
 
-    const existing = this._recentFiles().filter(f => f.path !== path);
+    const existing = this._recentFiles().filter((f) => f.path !== path);
     const updated = [newEntry, ...existing];
 
     this._recentFiles.set(updated);
@@ -122,7 +97,7 @@ export class MboxService {
   }
 
   async removeFromRecentFiles(path: string): Promise<void> {
-    const updated = this._recentFiles().filter(f => f.path !== path);
+    const updated = this._recentFiles().filter((f) => f.path !== path);
     this._recentFiles.set(updated);
     await this.settingsStore.saveRecentFiles(updated);
   }
@@ -133,8 +108,8 @@ export class MboxService {
         multiple: false,
         filters: [
           { name: 'MBOX Files', extensions: ['mbox'] },
-          { name: 'All Files', extensions: ['*'] }
-        ]
+          { name: 'All Files', extensions: ['*'] },
+        ],
       });
 
       if (typeof selected === 'string') {
@@ -153,16 +128,12 @@ export class MboxService {
       const stats = await this.api.openMbox(path);
       this._stats.set(stats);
       this._currentPath.set(path);
-      
-      // Save to recent files
+
       await this.addToRecentFiles(path);
-      
-      // Load initial emails
       await this.loadEmails();
     } catch (err) {
       this._error.set(`Failed to open MBOX: ${errorMessage(err)}`);
       this._stats.set(null);
-      // Remove from recent files if it failed to open
       await this.removeFromRecentFiles(path);
     } finally {
       this._isLoading.set(false);
@@ -178,7 +149,6 @@ export class MboxService {
     }
   }
 
-  // Called on every keystroke - debounces the actual search
   search(query: string): void {
     this._searchQuery.set(query);
     this._selectedLabel.set(null);
@@ -186,16 +156,13 @@ export class MboxService {
     this.searchSubject.next(query);
   }
 
-  // Actually executes the search after debounce
   private async executeSearch(query: string): Promise<void> {
-    // Increment search ID to track this search
     const searchId = ++this.currentSearchId;
-    
+
     try {
       if (query.trim()) {
         const results = await this.api.searchEmails(query, 500);
-        
-        // Only update if this is still the current search
+
         if (searchId === this.currentSearchId) {
           this._emails.set([...results.emails]);
           this._searchResultsCount.set(results.total_count);
@@ -251,19 +218,27 @@ export class MboxService {
     }
   }
 
-  async downloadAttachment(emailIndex: number, attachment: AttachmentInfo): Promise<void> {
+  async downloadAttachment(
+    emailIndex: number,
+    attachment: AttachmentInfo,
+  ): Promise<void> {
     try {
       const savePath = await save({
         defaultPath: attachment.filename,
-        filters: [{ name: 'All Files', extensions: ['*'] }]
+        filters: [{ name: 'All Files', extensions: ['*'] }],
       });
 
       if (savePath) {
-        const data = await this.api.getAttachment(emailIndex, attachment.part_index);
+        const data = await this.api.getAttachment(
+          emailIndex,
+          attachment.part_index,
+        );
         await writeFile(savePath, new Uint8Array(data));
       }
     } catch (err) {
-      this._error.set(`Failed to download attachment: ${errorMessage(err)}`);
+      this._error.set(
+        `Failed to download attachment: ${errorMessage(err)}`,
+      );
     }
   }
 
@@ -289,17 +264,5 @@ export class MboxService {
   clearSelection(): void {
     this._selectedEmail.set(null);
     this._selectedEmailBody.set(null);
-  }
-
-  formatFileSize(bytes: number): string {
-    return formatFileSizeUtil(bytes);
-  }
-
-  formatDate(dateStr: string): string {
-    return formatDateUtil(dateStr);
-  }
-
-  formatSender(email: EmailEntry): string {
-    return formatSenderUtil(email);
   }
 }

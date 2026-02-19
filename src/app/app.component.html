@@ -181,7 +181,7 @@
               tabindex="0"
               (click)="onEmailClick(email)"
               (keydown.enter)="onEmailClick(email)">
-              <div class="email-sender">{{ mbox.formatSender(email) }}</div>
+              <div class="email-sender">{{ formatSender(email) }}</div>
               <div class="email-subject">
                 @if (email.has_attachments) {
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="attachment-icon">
@@ -190,7 +190,7 @@
                 }
                 {{ email.subject || '(No subject)' }}
               </div>
-              <div class="email-date">{{ mbox.formatDate(email.date) }}</div>
+              <div class="email-date">{{ formatDate(email.date) }}</div>
               @if (email.labels.length > 0) {
                 <div class="email-labels">
                   @for (label of email.labels.slice(0, 3); track label) {
@@ -260,7 +260,7 @@
                 }
                 <div class="meta-row">
                   <span class="meta-label">Date:</span>
-                  <span class="meta-value">{{ mbox.formatDate(email.date) }}</span>
+                  <span class="meta-value">{{ formatDate(email.date) }}</span>
                 </div>
                 @if (email.labels.length > 0) {
                   <div class="meta-row">
@@ -293,7 +293,7 @@
                         </svg>
                         <div class="attachment-info">
                           <span class="attachment-name">{{ attachment.filename }}</span>
-                          <span class="attachment-size">{{ mbox.formatFileSize(attachment.size) }}</span>
+                          <span class="attachment-size">{{ formatFileSize(attachment.size) }}</span>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="download-icon">
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>

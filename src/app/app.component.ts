@@ -1,19 +1,26 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MboxService, EmailEntry, AttachmentInfo } from './services/mbox.service';
-import { getFileName as getFileNameUtil, formatRelativeDate } from './core/utils/format';
+import { MboxStateService } from './state/mbox-state.service';
+import {
+  getFileName as getFileNameUtil,
+  formatRelativeDate,
+  formatDate as formatDateUtil,
+  formatFileSize as formatFileSizeUtil,
+  formatSender as formatSenderUtil,
+} from './core/utils/format';
+import type { AttachmentInfo, EmailEntry } from './core/models/mbox.models';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
-  readonly mbox = inject(MboxService);
-  
+  readonly mbox = inject(MboxStateService);
+
   searchValue = '';
 
   async onOpenFile() {
@@ -24,7 +31,6 @@ export class AppComponent {
     await this.mbox.closeFile();
   }
 
-  // Called on every keystroke for instant search
   onSearchInput(value: string) {
     this.searchValue = value;
     this.mbox.search(value);
@@ -73,5 +79,17 @@ export class AppComponent {
 
   formatRecentDate(dateStr: string): string {
     return formatRelativeDate(dateStr);
+  }
+
+  formatDate(dateStr: string): string {
+    return formatDateUtil(dateStr);
+  }
+
+  formatFileSize(bytes: number): string {
+    return formatFileSizeUtil(bytes);
+  }
+
+  formatSender(email: EmailEntry): string {
+    return formatSenderUtil(email);
   }
 }
