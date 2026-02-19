@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MboxService, EmailEntry, AttachmentInfo } from './services/mbox.service';
+import { getFileName as getFileNameUtil, formatRelativeDate } from './core/utils/format';
 
 @Component({
   selector: 'app-root',
@@ -67,24 +68,10 @@ export class AppComponent {
   }
 
   getFileName(path: string | null): string {
-    if (!path) return '';
-    return path.split('/').pop() || path.split('\\').pop() || path;
+    return getFileNameUtil(path);
   }
 
   formatRecentDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) {
-      return 'Today';
-    } else if (diffDays === 1) {
-      return 'Yesterday';
-    } else if (diffDays < 7) {
-      return `${String(diffDays)} days ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
+    return formatRelativeDate(dateStr);
   }
 }

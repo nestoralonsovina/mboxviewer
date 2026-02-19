@@ -5,6 +5,11 @@ import { writeFile } from '@tauri-apps/plugin-fs';
 import { load, Store } from '@tauri-apps/plugin-store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import {
+  formatDate as formatDateUtil,
+  formatFileSize as formatFileSizeUtil,
+  formatSender as formatSenderUtil,
+} from '../core/utils/format';
 
 export function errorMessage(err: unknown): string {
   if (err instanceof Error) {
@@ -347,26 +352,14 @@ export class MboxService {
   }
 
   formatFileSize(bytes: number): string {
-    if (bytes < 1024) return `${String(bytes)} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return formatFileSizeUtil(bytes);
   }
 
   formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return formatDateUtil(dateStr);
   }
 
   formatSender(email: EmailEntry): string {
-    if (email.from_name) {
-      return email.from_name;
-    }
-    return email.from_address;
+    return formatSenderUtil(email);
   }
 }

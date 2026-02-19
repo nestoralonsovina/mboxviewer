@@ -97,7 +97,7 @@ No UI changes. Fix type safety, add tooling, remove dead code.
 Split the monolithic service. No UI template changes.
 
 ### 2.1 Extract `core/utils/format.ts`
-- [ ] done
+- [x] done
 - Create `src/app/core/utils/format.ts` with pure functions:
   - `formatDate(dateStr: string): string`
   - `formatFileSize(bytes: number): string`
