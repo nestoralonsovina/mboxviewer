@@ -300,10 +300,4 @@
 }
 
 <!-- Error Toast -->
-@if (mbox.error()) {
-  <div class="error-toast" role="button" tabindex="0" (click)="onDismissError()" (keydown.enter)="onDismissError()">
-    <app-icon name="alert-circle" [size]="20" />
-    {{ mbox.error() }}
-    <button class="btn-dismiss">Dismiss</button>
-  </div>
-}
+<app-error-toast [message]="mbox.error()" (dismissed)="onDismissError()" />

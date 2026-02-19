@@ -179,7 +179,7 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 - Replace all `<span class="spinner">` instances.
 
 ### 3.3 Extract `shared/components/error-toast/`
-- [ ] done
+- [x] done
 - Create `ErrorToastComponent`.
 - Inputs: `message: string | null` (via signal input).
 - Output: `dismissed`.
