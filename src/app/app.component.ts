@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MboxStateService } from './state/mbox-state.service';
+import { IconComponent } from './shared/components/icon/icon.component';
 import {
   getFileName as getFileNameUtil,
   formatRelativeDate,
@@ -14,7 +15,7 @@ import type { AttachmentInfo, EmailEntry } from './core/models/mbox.models';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, IconComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

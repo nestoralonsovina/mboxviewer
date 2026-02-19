@@ -166,7 +166,7 @@ Split the monolithic service. No UI template changes.
 Extract one component at a time. Each extraction is a commit. The app works after every step.
 
 ### 3.1 Extract `shared/components/icon/`
-- [ ] done
+- [x] done
 - Create `IconComponent` with an `input()` for the icon name.
 - Define an icon registry (string map of SVG path data for: `mail`, `close`, `folder`, `search`, `attachment`, `download`, `file`, `tag`, `activity`, `arrow-left`, `alert-circle`).
 - Replace all inline `<svg>` blocks in the template with `<app-icon name="mail" [size]="20">`.
