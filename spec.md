@@ -109,7 +109,7 @@ Split the monolithic service. No UI template changes.
 - Update `MboxService` and `AppComponent` to import from `core/utils/format`.
 
 ### 2.2 Extract `core/tauri/mbox-api.service.ts`
-- [ ] done
+- [x] done
 - Create `MboxApiService` — an injectable service that wraps all `invoke()` calls.
 - Methods (all return `Promise`):
   - `openMbox(path: string): Promise<MboxStats>`

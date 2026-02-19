@@ -1,5 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { invoke } from '@tauri-apps/api/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { writeFile } from '@tauri-apps/plugin-fs';
 import { load, Store } from '@tauri-apps/plugin-store';
@@ -10,67 +9,31 @@ import {
   formatFileSize as formatFileSizeUtil,
   formatSender as formatSenderUtil,
 } from '../core/utils/format';
+import { MboxApiService } from '../core/tauri/mbox-api.service';
+import type {
+  AttachmentInfo,
+  EmailBody,
+  EmailEntry,
+  MboxStats,
+  RecentFile,
+} from '../core/models/mbox.models';
+
+export type {
+  AttachmentInfo,
+  EmailAddress,
+  EmailBody,
+  EmailEntry,
+  LabelCount,
+  MboxStats,
+  RecentFile,
+  SearchResults,
+} from '../core/models/mbox.models';
 
 export function errorMessage(err: unknown): string {
   if (err instanceof Error) {
     return err.message;
   }
   return String(err);
-}
-
-export interface RecentFile {
-  path: string;
-  name: string;
-  lastOpened: string;
-}
-
-export interface EmailAddress {
-  name: string;
-  address: string;
-}
-
-export interface EmailEntry {
-  index: number;
-  offset: number;
-  length: number;
-  date: string;
-  from_name: string;
-  from_address: string;
-  to: EmailAddress[];
-  cc: EmailAddress[];
-  subject: string;
-  has_attachments: boolean;
-  labels: string[];
-}
-
-export interface EmailBody {
-  text: string | null;
-  html: string | null;
-  raw_headers: string;
-  attachments: AttachmentInfo[];
-}
-
-export interface AttachmentInfo {
-  filename: string;
-  content_type: string;
-  size: number;
-  part_index: number;
-}
-
-export interface LabelCount {
-  label: string;
-  count: number;
-}
-
-export interface MboxStats {
-  total_messages: number;
-  total_with_attachments: number;
-  labels: LabelCount[];
-}
-
-export interface SearchResults {
-  emails: EmailEntry[];
-  total_count: number;
 }
 
 const STORE_FILE = 'settings.json';
@@ -81,6 +44,8 @@ const MAX_RECENT_FILES = 10;
   providedIn: 'root'
 })
 export class MboxService {
+  private readonly api = inject(MboxApiService);
+
   // Signals for reactive state management
   private _isLoading = signal(false);
   private _isSearching = signal(false);
@@ -206,7 +171,7 @@ export class MboxService {
     this._error.set(null);
 
     try {
-      const stats = await invoke<MboxStats>('open_mbox', { path });
+      const stats = await this.api.openMbox(path);
       this._stats.set(stats);
       this._currentPath.set(path);
       
@@ -227,7 +192,7 @@ export class MboxService {
 
   async loadEmails(offset = 0, limit = 100): Promise<void> {
     try {
-      const emails = await invoke<EmailEntry[]>('get_emails', { offset, limit });
+      const emails = await this.api.getEmails(offset, limit);
       this._emails.set(emails);
     } catch (err) {
       this._error.set(`Failed to load emails: ${errorMessage(err)}`);
@@ -249,11 +214,11 @@ export class MboxService {
     
     try {
       if (query.trim()) {
-        const results = await invoke<SearchResults>('search_emails', { query, limit: 500 });
+        const results = await this.api.searchEmails(query, 500);
         
         // Only update if this is still the current search
         if (searchId === this.currentSearchId) {
-          this._emails.set(results.emails);
+          this._emails.set([...results.emails]);
           this._searchResultsCount.set(results.total_count);
         }
       } else {
@@ -280,7 +245,7 @@ export class MboxService {
 
     try {
       if (label) {
-        const results = await invoke<EmailEntry[]>('get_emails_by_label', { label });
+        const results = await this.api.getEmailsByLabel(label);
         this._emails.set(results);
       } else {
         await this.loadEmails();
@@ -298,7 +263,7 @@ export class MboxService {
     this._isLoading.set(true);
 
     try {
-      const body = await invoke<EmailBody>('get_email_body', { index: email.index });
+      const body = await this.api.getEmailBody(email.index);
       this._selectedEmailBody.set(body);
     } catch (err) {
       this._error.set(`Failed to load email: ${errorMessage(err)}`);
@@ -315,11 +280,7 @@ export class MboxService {
       });
 
       if (savePath) {
-        const data = await invoke<number[]>('get_attachment', {
-          emailIndex,
-          attachmentIndex: attachment.part_index
-        });
-        
+        const data = await this.api.getAttachment(emailIndex, attachment.part_index);
         await writeFile(savePath, new Uint8Array(data));
       }
     } catch (err) {
@@ -329,7 +290,7 @@ export class MboxService {
 
   async closeFile(): Promise<void> {
     try {
-      await invoke('close_mbox');
+      await this.api.closeMbox();
       this._stats.set(null);
       this._emails.set([]);
       this._selectedEmail.set(null);
