@@ -125,7 +125,7 @@ Split the monolithic service. No UI template changes.
 - No state. No side effects. Easy to mock in tests.
 
 ### 2.3 Extract `core/store/settings-store.service.ts`
-- [ ] done
+- [x] done
 - Create `SettingsStoreService` — manages `@tauri-apps/plugin-store` interactions.
 - Methods:
   - `initialize(): Promise<void>` — loads the store instance.

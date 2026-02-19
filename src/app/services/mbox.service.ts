@@ -1,7 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { writeFile } from '@tauri-apps/plugin-fs';
-import { load, Store } from '@tauri-apps/plugin-store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import {
@@ -10,6 +9,7 @@ import {
   formatSender as formatSenderUtil,
 } from '../core/utils/format';
 import { MboxApiService } from '../core/tauri/mbox-api.service';
+import { SettingsStoreService } from '../core/store/settings-store.service';
 import type {
   AttachmentInfo,
   EmailBody,
@@ -36,17 +36,13 @@ export function errorMessage(err: unknown): string {
   return String(err);
 }
 
-const STORE_FILE = 'settings.json';
-const RECENT_FILES_KEY = 'recentFiles';
-const MAX_RECENT_FILES = 10;
-
 @Injectable({
   providedIn: 'root'
 })
 export class MboxService {
   private readonly api = inject(MboxApiService);
+  private readonly settingsStore = inject(SettingsStoreService);
 
-  // Signals for reactive state management
   private _isLoading = signal(false);
   private _isSearching = signal(false);
   private _isInitialized = signal(false);
@@ -61,14 +57,8 @@ export class MboxService {
   private _error = signal<string | null>(null);
   private _recentFiles = signal<RecentFile[]>([]);
 
-  // Debounced search subject
   private searchSubject = new Subject<string>();
-  
-  // Track current search to cancel outdated searches
   private currentSearchId = 0;
-  
-  // Store instance
-  private store: Store | null = null;
 
   // Public readonly signals
   readonly isLoading = this._isLoading.asReadonly();
@@ -102,16 +92,12 @@ export class MboxService {
 
   private async initialize(): Promise<void> {
     try {
-      this.store = await load(STORE_FILE);
-      
-      // Load recent files
-      const recentFiles = await this.store.get<RecentFile[]>(RECENT_FILES_KEY);
-      if (recentFiles && recentFiles.length > 0) {
+      await this.settingsStore.initialize();
+
+      const recentFiles = await this.settingsStore.getRecentFiles();
+      if (recentFiles.length > 0) {
         this._recentFiles.set(recentFiles);
-        
-        // Auto-open the most recent file
-        const lastFile = recentFiles[0];
-        await this.loadMbox(lastFile.path);
+        await this.loadMbox(recentFiles[0].path);
       }
     } catch (err) {
       console.error('Failed to initialize store:', err);
@@ -121,31 +107,24 @@ export class MboxService {
   }
 
   private async addToRecentFiles(path: string): Promise<void> {
-    const name = path.split('/').pop() || path.split('\\').pop() || path;
+    const name = path.split('/').pop() ?? path.split('\\').pop() ?? path;
     const newEntry: RecentFile = {
       path,
       name,
       lastOpened: new Date().toISOString()
     };
 
-    // Remove existing entry for this path and add to front
     const existing = this._recentFiles().filter(f => f.path !== path);
-    const updated = [newEntry, ...existing].slice(0, MAX_RECENT_FILES);
-    
+    const updated = [newEntry, ...existing];
+
     this._recentFiles.set(updated);
-    
-    if (this.store) {
-      await this.store.set(RECENT_FILES_KEY, updated);
-    }
+    await this.settingsStore.saveRecentFiles(updated);
   }
 
   async removeFromRecentFiles(path: string): Promise<void> {
     const updated = this._recentFiles().filter(f => f.path !== path);
     this._recentFiles.set(updated);
-    
-    if (this.store) {
-      await this.store.set(RECENT_FILES_KEY, updated);
-    }
+    await this.settingsStore.saveRecentFiles(updated);
   }
 
   async openFile(): Promise<void> {
