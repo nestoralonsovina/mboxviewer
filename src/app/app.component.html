@@ -124,11 +124,12 @@
             </svg>
           }
           <input 
+            #searchInput
             type="text" 
             placeholder="Search emails... (from:user subject:test date:2024)" 
-            [value]="searchInput"
-            (input)="onSearchInput($any($event.target).value)">
-          @if (searchInput) {
+            [value]="searchValue"
+            (input)="onSearchInput(searchInput.value)">
+          @if (searchValue) {
             <button class="btn-clear" (click)="onClearSearch()">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/>
@@ -137,7 +138,7 @@
             </button>
           }
         </div>
-        @if (searchInput && mbox.searchResultsCount() !== null) {
+        @if (searchValue && mbox.searchResultsCount() !== null) {
           <span class="search-results-count">
             @if (mbox.searchResultsCount()! > mbox.emails().length) {
               {{ mbox.emails().length }} of {{ mbox.searchResultsCount() }} results

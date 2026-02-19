@@ -13,7 +13,7 @@ import { MboxService, EmailEntry, AttachmentInfo } from './services/mbox.service
 export class AppComponent {
   readonly mbox = inject(MboxService);
   
-  searchInput = '';
+  searchValue = '';
 
   async onOpenFile() {
     await this.mbox.openFile();
@@ -25,12 +25,12 @@ export class AppComponent {
 
   // Called on every keystroke for instant search
   onSearchInput(value: string) {
-    this.searchInput = value;
+    this.searchValue = value;
     this.mbox.search(value);
   }
 
   onClearSearch() {
-    this.searchInput = '';
+    this.searchValue = '';
     this.mbox.search('');
   }
 

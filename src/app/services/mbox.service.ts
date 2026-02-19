@@ -183,8 +183,8 @@ export class MboxService {
         ]
       });
 
-      if (selected) {
-        await this.loadMbox(selected as string);
+      if (typeof selected === 'string') {
+        await this.loadMbox(selected);
       }
     } catch (err) {
       this._error.set(`Failed to open file dialog: ${err}`);

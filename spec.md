@@ -25,7 +25,7 @@ No UI changes. Fix type safety, add tooling, remove dead code.
 - Fix any resulting compiler errors (array/object index access now returns `T | undefined`).
 
 ### 1.2 Fix `as string` in `MboxService.openFile()`
-- [ ] done
+- [x] done
 - File: `src/app/services/mbox.service.ts`, line 187.
 - `open({ multiple: false })` returns `string | string[] | null`. The `if (selected)` guard narrows away `null` but not `string[]`.
 - Replace `selected as string` with a proper type guard:
@@ -36,7 +36,7 @@ No UI changes. Fix type safety, add tooling, remove dead code.
   ```
 
 ### 1.3 Fix `$any()` in search input
-- [ ] done
+- [x] done
 - File: `src/app/app.component.html`, line 130.
 - Replace `$any($event.target).value` with a template reference variable:
   ```html
