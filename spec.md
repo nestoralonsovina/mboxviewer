@@ -149,7 +149,7 @@ Split the monolithic service. No UI template changes.
 - This makes the initialization controllable and testable.
 
 ### 2.6 Granular loading states
-- [ ] done
+- [x] done
 - Replace the single `_isLoading` signal with distinct signals:
   ```typescript
   readonly loadingFile = signal(false);

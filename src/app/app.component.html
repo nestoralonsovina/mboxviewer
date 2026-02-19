@@ -11,7 +11,7 @@
       <h1>MBOX Viewer</h1>
       <p>Open Gmail Takeout exports and other MBOX files</p>
       
-      @if (mbox.isLoading()) {
+      @if (mbox.loadingFile()) {
         <div class="loading-indicator">
           <span class="spinner"></span>
           <span>Loading...</span>
@@ -165,7 +165,7 @@
             </div>
           }
 
-          @if (mbox.isLoading() && mbox.emails().length === 0) {
+          @if ((mbox.loadingFile() || mbox.loadingEmails()) && mbox.emails().length === 0) {
             <div class="loading-state">
               <span class="spinner"></span>
               Loading emails...
@@ -204,7 +204,7 @@
             </div>
           }
 
-          @if (!mbox.isLoading() && mbox.emails().length === 0) {
+          @if (!mbox.loadingFile() && !mbox.loadingEmails() && mbox.emails().length === 0) {
             <div class="empty-state">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
@@ -308,7 +308,7 @@
 
               <!-- Email Body -->
               <div class="email-body">
-                @if (mbox.isLoading() && !body) {
+                @if (mbox.loadingEmailBody() && !body) {
                   <div class="loading-state">
                     <span class="spinner"></span>
                     Loading email content...

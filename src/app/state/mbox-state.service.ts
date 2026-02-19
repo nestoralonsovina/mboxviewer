@@ -21,7 +21,9 @@ export class MboxStateService {
   private readonly api = inject(MboxApiService);
   private readonly settingsStore = inject(SettingsStoreService);
 
-  private readonly _isLoading = signal(false);
+  private readonly _loadingFile = signal(false);
+  private readonly _loadingEmails = signal(false);
+  private readonly _loadingEmailBody = signal(false);
   private readonly _isSearching = signal(false);
   private readonly _isInitialized = signal(false);
   private readonly _stats = signal<MboxStats | null>(null);
@@ -38,7 +40,9 @@ export class MboxStateService {
   private readonly searchSubject = new Subject<string>();
   private currentSearchId = 0;
 
-  readonly isLoading = this._isLoading.asReadonly();
+  readonly loadingFile = this._loadingFile.asReadonly();
+  readonly loadingEmails = this._loadingEmails.asReadonly();
+  readonly loadingEmailBody = this._loadingEmailBody.asReadonly();
   readonly isSearching = this._isSearching.asReadonly();
   readonly isInitialized = this._isInitialized.asReadonly();
   readonly stats = this._stats.asReadonly();
@@ -119,7 +123,7 @@ export class MboxStateService {
   }
 
   async loadMbox(path: string): Promise<void> {
-    this._isLoading.set(true);
+    this._loadingFile.set(true);
     this._error.set(null);
 
     try {
@@ -134,7 +138,7 @@ export class MboxStateService {
       this._stats.set(null);
       await this.removeFromRecentFiles(path);
     } finally {
-      this._isLoading.set(false);
+      this._loadingFile.set(false);
     }
   }
 
@@ -185,7 +189,7 @@ export class MboxStateService {
   async filterByLabel(label: string | null): Promise<void> {
     this._selectedLabel.set(label);
     this._searchQuery.set('');
-    this._isLoading.set(true);
+    this._loadingEmails.set(true);
 
     try {
       if (label) {
@@ -197,14 +201,14 @@ export class MboxStateService {
     } catch (err) {
       this._error.set(`Failed to filter by label: ${errorMessage(err)}`);
     } finally {
-      this._isLoading.set(false);
+      this._loadingEmails.set(false);
     }
   }
 
   async selectEmail(email: EmailEntry): Promise<void> {
     this._selectedEmail.set(email);
     this._selectedEmailBody.set(null);
-    this._isLoading.set(true);
+    this._loadingEmailBody.set(true);
 
     try {
       const body = await this.api.getEmailBody(email.index);
@@ -212,7 +216,7 @@ export class MboxStateService {
     } catch (err) {
       this._error.set(`Failed to load email: ${errorMessage(err)}`);
     } finally {
-      this._isLoading.set(false);
+      this._loadingEmailBody.set(false);
     }
   }
 
