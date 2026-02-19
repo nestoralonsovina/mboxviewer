@@ -61,11 +61,9 @@ export class MboxStateService {
       .subscribe((query) => {
         void this.executeSearch(query);
       });
-
-    void this.initialize();
   }
 
-  private async initialize(): Promise<void> {
+  async initialize(): Promise<void> {
     try {
       await this.settingsStore.initialize();
 

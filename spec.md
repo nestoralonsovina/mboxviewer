@@ -143,7 +143,7 @@ Split the monolithic service. No UI template changes.
 - Keep only: signals, computed properties, orchestration logic.
 
 ### 2.5 Replace constructor side-effect with explicit initialization
-- [ ] done
+- [x] done
 - Remove the `this.initialize()` call from the constructor.
 - Use `APP_INITIALIZER` in `app.config.ts` to call `mboxState.initialize()` at startup.
 - This makes the initialization controllable and testable.
