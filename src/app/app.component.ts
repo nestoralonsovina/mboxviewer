@@ -7,6 +7,7 @@ import { SpinnerComponent } from './shared/components/spinner/spinner.component'
 import { ErrorToastComponent } from './shared/components/error-toast/error-toast.component';
 import { WelcomeComponent } from './features/welcome/welcome.component';
 import { SidebarComponent } from './features/mail/sidebar/sidebar.component';
+import { SearchToolbarComponent } from './features/mail/toolbar/search-toolbar.component';
 import {
   formatDate as formatDateUtil,
   formatFileSize as formatFileSizeUtil,
@@ -17,14 +18,12 @@ import type { AttachmentInfo, EmailEntry } from './core/models/mbox.models';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, SpinnerComponent, ErrorToastComponent, WelcomeComponent, SidebarComponent],
+  imports: [CommonModule, FormsModule, IconComponent, SpinnerComponent, ErrorToastComponent, WelcomeComponent, SidebarComponent, SearchToolbarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
 export class AppComponent {
   readonly mbox = inject(MboxStateService);
-
-  searchValue = '';
 
   async onOpenFile() {
     await this.mbox.openFile();
@@ -34,13 +33,11 @@ export class AppComponent {
     await this.mbox.closeFile();
   }
 
-  onSearchInput(value: string) {
-    this.searchValue = value;
+  onSearchInput(value: string): void {
     this.mbox.search(value);
   }
 
-  onClearSearch() {
-    this.searchValue = '';
+  onClearSearch(): void {
     this.mbox.search('');
   }
 

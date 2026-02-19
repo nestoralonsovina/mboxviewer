@@ -25,36 +25,12 @@
     <!-- Main Content -->
     <main class="main-content">
       <!-- Toolbar -->
-      <div class="toolbar">
-        <div class="search-box" [class.searching]="mbox.isSearching()">
-          @if (mbox.isSearching()) {
-            <app-spinner [size]="18" />
-          } @else {
-            <app-icon name="search" [size]="18" />
-          }
-          <input 
-            #searchInput
-            type="text" 
-            placeholder="Search emails... (from:user subject:test date:2024)" 
-            [value]="searchValue"
-            (input)="onSearchInput(searchInput.value)">
-          @if (searchValue) {
-            <button class="btn-clear" (click)="onClearSearch()">
-              <app-icon name="close" />
-            </button>
-          }
-        </div>
-        @let resultsCount = mbox.searchResultsCount();
-        @if (searchValue && resultsCount !== null) {
-          <span class="search-results-count">
-            @if (resultsCount > mbox.emails().length) {
-              {{ mbox.emails().length }} of {{ resultsCount }} results
-            } @else {
-              {{ resultsCount }} results
-            }
-          </span>
-        }
-      </div>
+      <app-search-toolbar
+        [isSearching]="mbox.isSearching()"
+        [searchResultsCount]="mbox.searchResultsCount()"
+        [emailCount]="mbox.emails().length"
+        (searchChange)="onSearchInput($event)"
+        (clearSearch)="onClearSearch()" />
 
       <!-- Content Area -->
       <div class="content-area">

@@ -203,7 +203,7 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 - Move CSS: `.sidebar*`, `.nav-*`, `.stat*`, `.file-name`.
 
 ### 3.6 Extract `features/mail/toolbar/search-toolbar.component.ts`
-- [ ] done
+- [x] done
 - Create `SearchToolbarComponent`.
 - Inputs: `isSearching`, `searchResultsCount`, `emailCount`.
 - Outputs: `search`, `clearSearch`.

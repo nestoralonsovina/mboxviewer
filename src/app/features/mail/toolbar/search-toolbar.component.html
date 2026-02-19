@@ -1,0 +1,30 @@
+<div class="toolbar">
+  <div class="search-box" [class.searching]="isSearching()">
+    @if (isSearching()) {
+      <app-spinner [size]="18" />
+    } @else {
+      <app-icon name="search" [size]="18" />
+    }
+    <input
+      #searchInput
+      type="text"
+      placeholder="Search emails... (from:user subject:test date:2024)"
+      [value]="searchValue()"
+      (input)="onSearchInput(searchInput.value)">
+    @if (searchValue()) {
+      <button class="btn-clear" (click)="onClearSearch()">
+        <app-icon name="close" />
+      </button>
+    }
+  </div>
+  @let resultsCount = searchResultsCount();
+  @if (searchValue() && resultsCount !== null) {
+    <span class="search-results-count">
+      @if (resultsCount > emailCount()) {
+        {{ emailCount() }} of {{ resultsCount }} results
+      } @else {
+        {{ resultsCount }} results
+      }
+    </span>
+  }
+</div>
