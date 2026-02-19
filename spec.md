@@ -75,7 +75,7 @@ No UI changes. Fix type safety, add tooling, remove dead code.
 - Fix any violations.
 
 ### 1.6 Add Vitest
-- [ ] done
+- [x] done
 - Install `vitest`, `@analogjs/vitest-angular` (Angular component testing support).
 - Create `vitest.config.ts` with Angular plugin.
 - Add `"test": "vitest"` script to `package.json`.

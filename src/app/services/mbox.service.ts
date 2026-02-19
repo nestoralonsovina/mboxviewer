@@ -6,7 +6,7 @@ import { load, Store } from '@tauri-apps/plugin-store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
-function errorMessage(err: unknown): string {
+export function errorMessage(err: unknown): string {
   if (err instanceof Error) {
     return err.message;
   }
