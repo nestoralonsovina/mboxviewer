@@ -59,7 +59,7 @@ No UI changes. Fix type safety, add tooling, remove dead code.
 - Same pattern for `mbox.selectedEmailBody()` and `mbox.searchResultsCount()`.
 
 ### 1.5 Add ESLint with strict TypeScript rules
-- [ ] done
+- [x] done
 - Install `eslint`, `@typescript-eslint/parser`, `@typescript-eslint/eslint-plugin`, `angular-eslint`.
 - Create `eslint.config.mjs` (flat config) extending `@typescript-eslint/strict-type-checked`.
 - Key rules (all `error`):

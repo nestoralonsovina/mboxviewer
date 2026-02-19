@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "lint": "eslint src/"
   },
   "private": true,
   "dependencies": {
@@ -30,6 +31,11 @@
     "@angular/cli": "^20.1.4",
     "@angular/compiler-cli": "^20.1.4",
     "@tauri-apps/cli": "^2",
-    "typescript": "~5.8.3"
+    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "@typescript-eslint/parser": "^8.56.0",
+    "angular-eslint": "^21.2.0",
+    "eslint": "9",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.56.0"
   }
 }

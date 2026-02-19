@@ -82,7 +82,7 @@ export class AppComponent {
     } else if (diffDays === 1) {
       return 'Yesterday';
     } else if (diffDays < 7) {
-      return `${diffDays} days ago`;
+      return `${String(diffDays)} days ago`;
     } else {
       return date.toLocaleDateString();
     }

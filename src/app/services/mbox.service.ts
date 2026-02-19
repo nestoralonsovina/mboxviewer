@@ -6,6 +6,13 @@ import { load, Store } from '@tauri-apps/plugin-store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
+function errorMessage(err: unknown): string {
+  if (err instanceof Error) {
+    return err.message;
+  }
+  return String(err);
+}
+
 export interface RecentFile {
   path: string;
   name: string;
@@ -113,16 +120,14 @@ export class MboxService {
   readonly labels = computed(() => this._stats()?.labels ?? []);
 
   constructor() {
-    // Set up debounced search - 150ms delay for instant feel while avoiding too many calls
     this.searchSubject.pipe(
       debounceTime(150),
       distinctUntilChanged()
     ).subscribe(query => {
-      this.executeSearch(query);
+      void this.executeSearch(query);
     });
     
-    // Initialize store and auto-load last file
-    this.initialize();
+    void this.initialize();
   }
 
   private async initialize(): Promise<void> {
@@ -187,7 +192,7 @@ export class MboxService {
         await this.loadMbox(selected);
       }
     } catch (err) {
-      this._error.set(`Failed to open file dialog: ${err}`);
+      this._error.set(`Failed to open file dialog: ${errorMessage(err)}`);
     }
   }
 
@@ -206,7 +211,7 @@ export class MboxService {
       // Load initial emails
       await this.loadEmails();
     } catch (err) {
-      this._error.set(`Failed to open MBOX: ${err}`);
+      this._error.set(`Failed to open MBOX: ${errorMessage(err)}`);
       this._stats.set(null);
       // Remove from recent files if it failed to open
       await this.removeFromRecentFiles(path);
@@ -220,7 +225,7 @@ export class MboxService {
       const emails = await invoke<EmailEntry[]>('get_emails', { offset, limit });
       this._emails.set(emails);
     } catch (err) {
-      this._error.set(`Failed to load emails: ${err}`);
+      this._error.set(`Failed to load emails: ${errorMessage(err)}`);
     }
   }
 
@@ -254,7 +259,7 @@ export class MboxService {
       }
     } catch (err) {
       if (searchId === this.currentSearchId) {
-        this._error.set(`Search failed: ${err}`);
+        this._error.set(`Search failed: ${errorMessage(err)}`);
       }
     } finally {
       if (searchId === this.currentSearchId) {
@@ -276,7 +281,7 @@ export class MboxService {
         await this.loadEmails();
       }
     } catch (err) {
-      this._error.set(`Failed to filter by label: ${err}`);
+      this._error.set(`Failed to filter by label: ${errorMessage(err)}`);
     } finally {
       this._isLoading.set(false);
     }
@@ -291,7 +296,7 @@ export class MboxService {
       const body = await invoke<EmailBody>('get_email_body', { index: email.index });
       this._selectedEmailBody.set(body);
     } catch (err) {
-      this._error.set(`Failed to load email: ${err}`);
+      this._error.set(`Failed to load email: ${errorMessage(err)}`);
     } finally {
       this._isLoading.set(false);
     }
@@ -313,7 +318,7 @@ export class MboxService {
         await writeFile(savePath, new Uint8Array(data));
       }
     } catch (err) {
-      this._error.set(`Failed to download attachment: ${err}`);
+      this._error.set(`Failed to download attachment: ${errorMessage(err)}`);
     }
   }
 
@@ -328,7 +333,7 @@ export class MboxService {
       this._selectedLabel.set(null);
       this._currentPath.set(null);
     } catch (err) {
-      this._error.set(`Failed to close file: ${err}`);
+      this._error.set(`Failed to close file: ${errorMessage(err)}`);
     }
   }
 
@@ -342,7 +347,7 @@ export class MboxService {
   }
 
   formatFileSize(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024) return `${String(bytes)} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   }
