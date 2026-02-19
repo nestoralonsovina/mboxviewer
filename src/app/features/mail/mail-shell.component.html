@@ -1,0 +1,48 @@
+<div class="app-layout">
+  <!-- Sidebar -->
+  <app-sidebar
+    [stats]="mbox.stats()"
+    [labels]="mbox.labels()"
+    [selectedLabel]="mbox.selectedLabel()"
+    [searchQuery]="mbox.searchQuery()"
+    [currentPath]="mbox.currentPath()"
+    (openFile)="onOpenFile()"
+    (closeFile)="onCloseFile()"
+    (labelClick)="onLabelClick($event)" />
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Toolbar -->
+    <app-search-toolbar
+      [isSearching]="mbox.isSearching()"
+      [searchResultsCount]="mbox.searchResultsCount()"
+      [emailCount]="mbox.emails().length"
+      (searchChange)="onSearchInput($event)"
+      (clearSearch)="onClearSearch()" />
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Email List -->
+      <app-email-list
+        class="email-list"
+        [class.has-selection]="mbox.selectedEmail()"
+        [emails]="mbox.emails()"
+        [selectedEmail]="mbox.selectedEmail()"
+        [isLoading]="mbox.loadingFile() || mbox.loadingEmails()"
+        [searchQuery]="mbox.searchQuery()"
+        [selectedLabel]="mbox.selectedLabel()"
+        (emailClick)="onEmailClick($event)" />
+
+      <!-- Email Detail -->
+      @let email = mbox.selectedEmail();
+      @if (email) {
+        <app-email-detail
+          [email]="email"
+          [emailBody]="mbox.selectedEmailBody()"
+          [isLoading]="mbox.loadingEmailBody()"
+          (closeDetail)="onCloseEmail()"
+          (downloadAttachment)="onDownloadAttachment($event)" />
+      }
+    </div>
+  </main>
+</div>

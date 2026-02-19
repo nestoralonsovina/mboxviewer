@@ -230,7 +230,7 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 - Move CSS: `.email-detail`, `.detail-*`, `.meta-*`, `.attachments-*`, `.email-body`, `.email-iframe`, `.email-text`.
 
 ### 3.9 Compose `MailShellComponent`
-- [ ] done
+- [x] done
 - Create `features/mail/mail-shell.component.ts` — the layout that composes sidebar + main content.
 - `AppComponent` becomes a thin shell: just `@if (mbox.isFileOpen()) { <app-mail-shell /> } @else { <app-welcome /> }` + `<app-error-toast>`.
 
@@ -242,37 +242,3 @@ Extract one component at a time. Each extraction is a commit. The app works afte
 
 ---
 
-## Phase 4: Polish
-
-### 4.1 Add pure pipes
-- [ ] done
-- Create `FileNamePipe` — wraps `getFileName()`.
-- Create `RelativeDatePipe` — wraps `formatRelativeDate()`. Pure pipe = memoized.
-- Use them in templates where method calls currently run on every change detection.
-
-### 4.2 Tighten security
-- [ ] done
-- Change iframe `sandbox="allow-same-origin"` to `sandbox=""` (fully sandboxed).
-- Add a restrictive CSP to `src-tauri/tauri.conf.json`:
-  ```json
-  "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'"
-  ```
-- Verify email rendering still works with the tightened sandbox.
-
-### 4.3 Email list pagination
-- [ ] done
-- Implement "load more" or infinite scroll in `EmailListComponent`.
-- Track `offset` in `MboxStateService`. `loadMoreEmails()` appends to existing list.
-- Use `@angular/cdk/scrolling` virtual scroll or a manual intersection observer.
-
-### 4.4 Keyboard navigation
-- [ ] done
-- Arrow up/down to navigate email list.
-- Enter to open selected email.
-- Escape to close email detail.
-- Implement via `@HostListener` or `cdkTrapFocus` in appropriate components.
-
-### 4.5 Narrow Tauri permissions
-- [ ] done
-- In `src-tauri/capabilities/default.json`, remove `opener:default` (unused).
-- Scope `fs:allow-read` and `fs:allow-write` to specific paths if possible.
