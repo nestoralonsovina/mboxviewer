@@ -1,88 +1,132 @@
-# MBOX Viewer — Development Prompt
+# MBOX Viewer — Tailwind Migration Prompt
 
-You are continuing the frontend refactoring of an Angular 20 + Tauri 2 MBOX viewer app.
+You are migrating an Angular 20 + Tauri 2 MBOX viewer app from custom CSS to Tailwind CSS.
 
 ## How to use this prompt
 
 1. Read `spec.md` in the project root. It defines every task with checkboxes (`[ ]` = pending, `[x]` = done).
 2. Find the **first task not marked as done**. That is your task.
 3. Execute that task following the rules below.
-4. When finished, mark it `[x]` in `spec.md`, commit and push your changes
+4. When finished, mark it `[x]` in `spec.md`, commit and push your changes.
 5. Stop. Do not proceed to the next task unless explicitly asked.
 
 ## Rules
 
-### TypeScript strictness (non-negotiable)
+### Tailwind conventions
 
-- Zero `any`. Zero `as` type assertions. Zero `@ts-ignore`. Zero `!` non-null assertions.
-- If a type is `unknown`, narrow it with a type guard. If an index access returns `T | undefined`, handle the `undefined`.
-- If the compiler complains, the compiler is right. Fix the type, not the symptom.
+- **Tailwind 4** — CSS-first config with `@theme` directive, no `tailwind.config.js`.
+- **Utility-first** — prefer Tailwind classes over custom CSS.
+- **Dark mode** — use `dark:` variant classes (auto-detects `prefers-color-scheme`).
+- **Responsive** — use `max-md:`, `max-lg:` for mobile-down breakpoints.
+- **No arbitrary values** — use Tailwind's scale where possible. Use `[value]` syntax only when necessary.
+- **See** `docs/tailwind-v4-reference.md` for complete API reference.
 
-### Angular conventions
+### Migration pattern
 
-- Standalone components only. No NgModules.
-- Use `input()` / `output()` signal-based APIs for component I/O.
-- Use `inject()` — never constructor injection.
-- Use `@let` for template local variables to avoid repeated signal calls and `!` assertions.
-- Use Angular 20 control flow: `@if`, `@for`, `@let`. No `*ngIf`, `*ngFor`.
+When migrating a component's CSS to Tailwind:
 
-### Component extraction pattern
+1. **Read the existing CSS file** — understand all styles being used.
+2. **Map CSS properties to Tailwind utilities**:
+   - `display: flex` → `flex`
+   - `align-items: center` → `items-center`
+   - `padding: 0.75rem 1rem` → `px-4 py-3`
+   - `color: var(--text-primary)` → `text-slate-900 dark:text-slate-50`
+   - `background: var(--bg-secondary)` → `bg-slate-50 dark:bg-slate-800`
+   - `border-radius: var(--radius-md)` → `rounded-lg`
+   - `transition: all var(--transition)` → `transition-all duration-150`
+3. **Apply classes directly in HTML** — add to element's `class` attribute.
+4. **Handle :host styles** — use component's `host` property:
+   ```typescript
+   @Component({
+     host: { class: 'block h-screen overflow-hidden' },
+     ...
+   })
+   ```
+5. **Delete the CSS file** when fully migrated.
+6. **Remove styleUrl** from component decorator.
+7. **Verify**: `bun run build` must succeed.
 
-When extracting a component from the God Component (`app.component.*`):
+### Design token mapping
 
-1. Create the new component file(s) with their template and styles.
-2. Define typed `input()` and `output()` signals.
-3. Cut the relevant template block from `app.component.html` into the new component.
-4. Cut the relevant CSS from `app.component.css` into the new component.
-5. Wire the new component into the parent with proper input bindings and output handlers.
-6. Verify the app still compiles: `bun run build`.
-7. If the task says to write tests, write them. If adding a pure function or pipe, always write tests.
+Current CSS variables → Tailwind classes:
 
-### Service extraction pattern
+| CSS Variable | Light Mode | Dark Mode |
+|--------------|------------|-----------|
+| `--bg-primary` | `bg-white` | `dark:bg-slate-900` |
+| `--bg-secondary` | `bg-slate-50` | `dark:bg-slate-800` |
+| `--bg-tertiary` | `bg-slate-100` | `dark:bg-slate-700` |
+| `--text-primary` | `text-slate-900` | `dark:text-slate-50` |
+| `--text-secondary` | `text-slate-600` | `dark:text-slate-400` |
+| `--text-muted` | `text-slate-400` | `dark:text-slate-500` |
+| `--border-color` | `border-slate-200` | `dark:border-slate-700` |
+| `--accent-color` | `text-indigo-500` / `bg-indigo-500` | same |
+| `--accent-hover` | `hover:bg-indigo-600` | same |
+| `--danger-color` | `text-rose-500` | same |
+| `--radius-sm` | `rounded` | — |
+| `--radius-md` | `rounded-lg` | — |
+| `--radius-lg` | `rounded-xl` | — |
+| `--transition` | `transition-all duration-150` | — |
 
-When extracting a service:
+### Spacing scale
 
-1. Create the new service file.
-2. Move the relevant methods and their dependencies.
-3. Update the consuming service/component to inject the new service.
-4. Ensure no circular dependencies.
-5. Verify: `bun run build`.
+| CSS Value | Tailwind |
+|-----------|----------|
+| `0.25rem` | `1` |
+| `0.375rem` | `1.5` |
+| `0.5rem` | `2` |
+| `0.625rem` | `2.5` |
+| `0.75rem` | `3` |
+| `0.875rem` | `3.5` |
+| `1rem` | `4` |
+| `1.25rem` | `5` |
+| `1.5rem` | `6` |
+| `2rem` | `8` |
+| `2.5rem` | `10` |
+| `3rem` | `12` |
 
-### File placement
+### Typography scale
 
-```
-src/app/core/         — framework-agnostic: API clients, models, pure utils
-src/app/state/        — signal-based state management
-src/app/shared/       — reusable UI components (icon, spinner, toast), pipes
-src/app/features/     — feature modules (welcome, mail and its children)
-```
+| CSS Value | Tailwind |
+|-----------|----------|
+| `0.6875rem` (11px) | `text-[11px]` |
+| `0.75rem` (12px) | `text-xs` |
+| `0.8125rem` (13px) | `text-[13px]` |
+| `0.875rem` (14px) | `text-sm` |
+| `1rem` (16px) | `text-base` |
+| `1.25rem` (20px) | `text-xl` |
+| `2rem` (32px) | `text-3xl` |
+
+### Responsive breakpoints
+
+| CSS Media Query | Tailwind |
+|-----------------|----------|
+| `@media (max-width: 900px)` | `max-lg:` (≤1024px) or custom |
+| `@media (max-width: 700px)` | `max-md:` (≤768px) |
 
 ### What NOT to do
 
-- Do not create barrel files (`index.ts`). Import directly from the file.
-- Do not add `@angular/router` unless the spec task explicitly says to.
-- Do not change Rust/Tauri backend code unless the spec task explicitly says to.
+- Do not create a `tailwind.config.js` — use CSS-first config.
+- Do not add custom CSS unless Tailwind cannot express it.
+- Do not change component logic or TypeScript code (unless updating `host`).
+- Do not modify Rust/Tauri backend code.
 - Do not refactor beyond the scope of the current task.
-- Do not skip writing tests when the spec says to write them.
+- Do not use `@apply` — inline utilities directly.
 
 ## Verification
 
 After every task:
 
 1. `bun run build` must succeed with zero errors.
-2. `bun run lint` must pass (once ESLint is added in 1.5).
-3. `bun run test` must pass (once Vitest is added in 1.6).
-4. Manual smoke test: open an `.mbox` file, browse emails, search, filter by label, view email body, download an attachment. Everything must work as before.
+2. `bun run lint` must pass.
+3. Manual smoke test: open an `.mbox` file, browse emails, search, filter by label, view email body, download an attachment. Everything must work as before.
+4. Visual test: appearance should match or improve upon the original design.
 
 ## Context files
 
 Read these before starting:
 
-- `spec.md` — the full task list and architecture spec
-- `AGENTS.md` — project structure, Tauri commands, search syntax
-- `src/app/services/mbox.service.ts` — current monolithic service
-- `src/app/app.component.ts` — current God Component (TS)
-- `src/app/app.component.html` — current God Component (template)
-- `src/app/app.component.css` — current God Component (styles)
-- `tsconfig.json` — current TypeScript configuration
-- `package.json` — current dependencies
+- `spec.md` — the full task list and migration spec
+- `docs/tailwind-v4-reference.md` — Tailwind v4 API reference (theme, directives, patterns)
+- `AGENTS.md` — project structure, Tauri commands
+- `src/styles.css` — current global styles with CSS variables
+- Any component's `.css` file before migrating it
