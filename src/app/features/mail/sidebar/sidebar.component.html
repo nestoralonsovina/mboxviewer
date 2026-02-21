@@ -1,10 +1,16 @@
-<aside class="sidebar">
-  <div class="sidebar-header">
-    <button class="btn-icon" (click)="openFile.emit()" title="Open another file">
+<aside class="flex flex-col w-65 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 max-lg:w-55 max-md:w-full max-md:max-h-[40vh]">
+  <div class="flex items-center gap-2 p-3 border-b border-slate-200 dark:border-slate-700">
+    <button
+      class="flex items-center justify-center w-8 h-8 p-0 text-slate-600 dark:text-slate-400 bg-transparent border-none rounded cursor-pointer transition-all duration-150 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-700"
+      (click)="openFile.emit()"
+      title="Open another file">
       <app-icon name="folder" [size]="18" />
     </button>
-    <span class="file-name" [title]="currentPath() ?? ''">{{ formatFileName(currentPath()) }}</span>
-    <button class="btn-icon" (click)="closeFile.emit()" title="Close file">
+    <span class="flex-1 text-sm font-medium text-slate-900 dark:text-slate-50 truncate" [title]="currentPath() ?? ''">{{ formatFileName(currentPath()) }}</span>
+    <button
+      class="flex items-center justify-center w-8 h-8 p-0 text-slate-600 dark:text-slate-400 bg-transparent border-none rounded cursor-pointer transition-all duration-150 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-700"
+      (click)="closeFile.emit()"
+      title="Close file">
       <app-icon name="close" [size]="18" />
     </button>
   </div>

@@ -91,7 +91,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 - Delete `mail-shell.component.css`
 
 ### 2.3 Migrate sidebar.component
-- [ ] done
+- [x] done
 - File: `src/app/features/mail/sidebar/sidebar.component.html`
 - Convert:
   - `.sidebar` → `flex flex-col w-65 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700`

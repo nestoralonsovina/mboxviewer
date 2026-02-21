@@ -9,41 +9,16 @@ import type { MboxStats } from '../../../core/models/mbox.models';
   template: `
     @let s = stats();
     @if (s) {
-      <div class="sidebar-stats">
-        <div class="stat">
-          <span class="stat-value">{{ s.total_messages | number }}</span>
-          <span class="stat-label">emails</span>
+      <div class="flex gap-4 p-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+        <div class="flex flex-col">
+          <span class="text-xl font-semibold text-slate-900 dark:text-slate-50">{{ s.total_messages | number }}</span>
+          <span class="text-xs text-slate-600 dark:text-slate-400">emails</span>
         </div>
-        <div class="stat">
-          <span class="stat-value">{{ s.total_with_attachments | number }}</span>
-          <span class="stat-label">with attachments</span>
+        <div class="flex flex-col">
+          <span class="text-xl font-semibold text-slate-900 dark:text-slate-50">{{ s.total_with_attachments | number }}</span>
+          <span class="text-xs text-slate-600 dark:text-slate-400">with attachments</span>
         </div>
       </div>
-    }
-  `,
-  styles: `
-    .sidebar-stats {
-      display: flex;
-      gap: 1rem;
-      padding: 1rem;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .stat {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stat-value {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
     }
   `,
 })

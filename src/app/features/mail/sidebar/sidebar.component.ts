@@ -10,7 +10,6 @@ import type { LabelCount, MboxStats } from '../../../core/models/mbox.models';
   standalone: true,
   imports: [IconComponent, SidebarStatsComponent, LabelNavComponent],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
   readonly stats = input.required<MboxStats | null>();

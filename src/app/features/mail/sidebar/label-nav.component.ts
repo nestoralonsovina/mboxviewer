@@ -8,67 +8,31 @@ import type { LabelCount } from '../../../core/models/mbox.models';
   standalone: true,
   imports: [DecimalPipe, IconComponent],
   template: `
-    <nav class="sidebar-nav">
+    <nav class="flex-1 overflow-y-auto p-2">
       <button
-        class="nav-item"
-        [class.active]="!selectedLabel() && !searchQuery()"
+        class="flex items-center gap-3 w-full px-3 py-2.5 text-sm bg-transparent border-none rounded cursor-pointer text-left transition-all duration-150"
+        [class]="!selectedLabel() && !searchQuery()
+          ? 'text-indigo-500 bg-indigo-500/10 font-medium'
+          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-700'"
         (click)="labelClick.emit(null)">
         <app-icon name="activity" />
         All Mail
-        <span class="nav-count">{{ totalMessages() | number }}</span>
+        <span class="ml-auto text-xs text-slate-400 dark:text-slate-500">{{ totalMessages() | number }}</span>
       </button>
 
       @for (label of labels(); track label.label) {
         <button
-          class="nav-item"
-          [class.active]="selectedLabel() === label.label"
+          class="flex items-center gap-3 w-full px-3 py-2.5 text-sm bg-transparent border-none rounded cursor-pointer text-left transition-all duration-150"
+          [class]="selectedLabel() === label.label
+            ? 'text-indigo-500 bg-indigo-500/10 font-medium'
+            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-700'"
           (click)="labelClick.emit(label.label)">
           <app-icon name="tag" />
           {{ label.label }}
-          <span class="nav-count">{{ label.count | number }}</span>
+          <span class="ml-auto text-xs text-slate-400 dark:text-slate-500">{{ label.count | number }}</span>
         </button>
       }
     </nav>
-  `,
-  styles: `
-    .sidebar-nav {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0.5rem;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      width: 100%;
-      padding: 0.625rem 0.75rem;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      background: transparent;
-      border: none;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      text-align: left;
-      transition: all var(--transition);
-    }
-
-    .nav-item:hover {
-      color: var(--text-primary);
-      background: var(--bg-tertiary);
-    }
-
-    .nav-item.active {
-      color: var(--accent-color);
-      background: rgba(13, 110, 253, 0.1);
-      font-weight: 500;
-    }
-
-    .nav-count {
-      margin-left: auto;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
   `,
 })
 export class LabelNavComponent {
