@@ -9,7 +9,6 @@ import type { RecentFile } from '../../core/models/mbox.models';
   standalone: true,
   imports: [IconComponent, SpinnerComponent, RecentFilesListComponent],
   templateUrl: './welcome.component.html',
-  styleUrl: './welcome.component.css',
 })
 export class WelcomeComponent {
   readonly recentFiles = input.required<readonly RecentFile[]>();

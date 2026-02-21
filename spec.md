@@ -199,7 +199,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 ## Phase 6: Welcome Screen Components
 
 ### 6.1 Migrate welcome.component
-- [ ] done
+- [x] done
 - File: `src/app/features/welcome/welcome.component.html`
 - Convert:
   - `.welcome-screen` → `flex items-center justify-center h-screen bg-gradient-to-br from-slate-100 to-white dark:from-slate-900 dark:to-slate-800`

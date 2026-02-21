@@ -1,18 +1,20 @@
-<div class="welcome-screen">
-  <div class="welcome-content">
-    <div class="welcome-icon">
+<div class="flex items-center justify-center h-screen bg-gradient-to-br from-slate-100 to-white dark:from-slate-900 dark:to-slate-800">
+  <div class="text-center p-12">
+    <div class="text-indigo-500 mb-6">
       <app-icon name="mail" [size]="80" [strokeWidth]="1.5" />
     </div>
-    <h1>MBOX Viewer</h1>
-    <p>Open Gmail Takeout exports and other MBOX files</p>
+    <h1 class="text-3xl font-semibold text-slate-900 dark:text-slate-50 mb-2">MBOX Viewer</h1>
+    <p class="text-slate-500 mb-8">Open Gmail Takeout exports and other MBOX files</p>
 
     @if (isLoading()) {
-      <div class="loading-indicator">
+      <div class="flex items-center gap-3 text-slate-500 justify-center">
         <app-spinner />
         <span>Loading...</span>
       </div>
     } @else {
-      <button class="btn-primary" (click)="openFile.emit()">
+      <button
+        class="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-white bg-indigo-500 border-none rounded-lg cursor-pointer hover:bg-indigo-600 disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+        (click)="openFile.emit()">
         Open MBOX File
       </button>
 
