@@ -7,6 +7,7 @@ This file provides guidance for AI agents working on this codebase.
 MBOX Viewer is a desktop application for viewing Gmail Takeout exports and other MBOX files. It's built with:
 
 - **Frontend**: Angular 20 with standalone components and signals
+- **Styling**: Tailwind CSS v4 (utility-first, no custom CSS)
 - **Backend**: Tauri 2 (Rust) wrapping the [mboxshell](https://github.com/nestoralonsovina/mboxshell) library
 - **Package Manager**: Bun
 
@@ -97,6 +98,17 @@ size:>1mb                   # Size filter
 "exact phrase"              # Exact match
 term1 OR term2              # OR search
 ```
+
+## Styling Guidelines
+
+**Use Tailwind CSS only.** No custom CSS files.
+
+- All styling via Tailwind utility classes in templates
+- Theme configuration in `src/styles.css` using `@theme` directive
+- Dark mode via `dark:` variant (auto-detects `prefers-color-scheme`)
+- Responsive via `max-md:`, `max-lg:` breakpoints
+- Component host styles via Angular's `host` property, not `:host` CSS
+- See `docs/tailwind-v4-reference.md` for API reference
 
 ## Development Notes
 

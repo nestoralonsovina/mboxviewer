@@ -54,4 +54,8 @@ export class MailShellComponent {
   onCloseEmail(): void {
     this.mbox.clearSelection();
   }
+
+  async onLoadMore(): Promise<void> {
+    await this.mbox.loadMoreEmails();
+  }
 }

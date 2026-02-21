@@ -155,7 +155,15 @@ async fn open_mbox(path: String, state: State<'_, AppState>) -> Result<MboxStats
     }
 
     // Build or load the index
-    let entries = build_index(&path_buf, false, None).map_err(|e| e.to_string())?;
+    let mut entries = build_index(&path_buf, false, None).map_err(|e| e.to_string())?;
+
+    // Sort by date, most recent first
+    entries.sort_by(|a, b| b.date.cmp(&a.date));
+
+    // Reassign sequence numbers after sorting to maintain correct indexing
+    for (i, entry) in entries.iter_mut().enumerate() {
+        entry.sequence = i as u64;
+    }
 
     // Open the store for reading message bodies
     let store = MboxStore::open(&path_buf).map_err(|e| e.to_string())?;

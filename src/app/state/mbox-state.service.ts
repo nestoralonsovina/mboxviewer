@@ -23,6 +23,7 @@ export class MboxStateService {
 
   private readonly _loadingFile = signal(false);
   private readonly _loadingEmails = signal(false);
+  private readonly _loadingMore = signal(false);
   private readonly _loadingEmailBody = signal(false);
   private readonly _isSearching = signal(false);
   private readonly _isInitialized = signal(false);
@@ -36,12 +37,17 @@ export class MboxStateService {
   private readonly _currentPath = signal<string | null>(null);
   private readonly _error = signal<string | null>(null);
   private readonly _recentFiles = signal<RecentFile[]>([]);
+  private readonly _hasMore = signal(false);
+  private readonly _currentOffset = signal(0);
+
+  private readonly PAGE_SIZE = 50;
 
   private readonly searchSubject = new Subject<string>();
   private currentSearchId = 0;
 
   readonly loadingFile = this._loadingFile.asReadonly();
   readonly loadingEmails = this._loadingEmails.asReadonly();
+  readonly loadingMore = this._loadingMore.asReadonly();
   readonly loadingEmailBody = this._loadingEmailBody.asReadonly();
   readonly isSearching = this._isSearching.asReadonly();
   readonly isInitialized = this._isInitialized.asReadonly();
@@ -55,6 +61,7 @@ export class MboxStateService {
   readonly currentPath = this._currentPath.asReadonly();
   readonly error = this._error.asReadonly();
   readonly recentFiles = this._recentFiles.asReadonly();
+  readonly hasMore = this._hasMore.asReadonly();
 
   readonly isFileOpen = computed(() => this._stats() !== null);
   readonly labels = computed(() => this._stats()?.labels ?? []);
@@ -142,12 +149,50 @@ export class MboxStateService {
     }
   }
 
-  async loadEmails(offset = 0, limit = 100): Promise<void> {
+  async loadEmails(): Promise<void> {
+    this._loadingEmails.set(true);
+    this._currentOffset.set(0);
+
     try {
-      const emails = await this.api.getEmails(offset, limit);
+      const emails = await this.api.getEmails(0, this.PAGE_SIZE);
       this._emails.set(emails);
+
+      const stats = this._stats();
+      this._hasMore.set(stats !== null && emails.length < stats.total_messages);
+      this._currentOffset.set(emails.length);
     } catch (err) {
       this._error.set(`Failed to load emails: ${errorMessage(err)}`);
+    } finally {
+      this._loadingEmails.set(false);
+    }
+  }
+
+  async loadMoreEmails(): Promise<void> {
+    if (this._loadingMore() || !this._hasMore()) {
+      return;
+    }
+
+    this._loadingMore.set(true);
+
+    try {
+      const offset = this._currentOffset();
+      const moreEmails = await this.api.getEmails(offset, this.PAGE_SIZE);
+
+      if (moreEmails.length > 0) {
+        this._emails.update((current) => [...current, ...moreEmails]);
+        this._currentOffset.set(offset + moreEmails.length);
+
+        const stats = this._stats();
+        this._hasMore.set(
+          stats !== null && offset + moreEmails.length < stats.total_messages,
+        );
+      } else {
+        this._hasMore.set(false);
+      }
+    } catch (err) {
+      this._error.set(`Failed to load more emails: ${errorMessage(err)}`);
+    } finally {
+      this._loadingMore.set(false);
     }
   }
 

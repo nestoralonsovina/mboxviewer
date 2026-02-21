@@ -23,6 +23,13 @@
     (emailClick)="onEmailClick($event)" />
 }
 
+@if (isLoadingMore()) {
+  <div class="flex items-center justify-center gap-2 py-4 text-slate-400 dark:text-slate-500">
+    <app-spinner [size]="14" />
+    <span class="text-sm">Loading more...</span>
+  </div>
+}
+
 @if (!isLoading() && emails().length === 0) {
   <div class="flex flex-col items-center justify-center gap-4 p-12 text-slate-400 dark:text-slate-500">
     <app-icon name="mail" [size]="48" [strokeWidth]="1.5" class="opacity-50" />

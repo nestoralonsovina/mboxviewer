@@ -25,14 +25,17 @@
       <!-- Email List -->
       <app-email-list
         [class]="mbox.selectedEmail()
-          ? 'flex-none w-[400px] max-lg:w-[300px] max-md:hidden border-r border-slate-200 dark:border-slate-700'
+          ? 'w-2/5 min-w-[300px] max-md:hidden border-r border-slate-200 dark:border-slate-700'
           : 'flex-1'"
         [emails]="mbox.emails()"
         [selectedEmail]="mbox.selectedEmail()"
         [isLoading]="mbox.loadingFile() || mbox.loadingEmails()"
+        [isLoadingMore]="mbox.loadingMore()"
+        [hasMore]="mbox.hasMore()"
         [searchQuery]="mbox.searchQuery()"
         [selectedLabel]="mbox.selectedLabel()"
-        (emailClick)="onEmailClick($event)" />
+        (emailClick)="onEmailClick($event)"
+        (loadMore)="onLoadMore()" />
 
       <!-- Email Detail -->
       @let email = mbox.selectedEmail();
