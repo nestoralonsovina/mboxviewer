@@ -130,7 +130,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 - Delete `email-list.component.css`
 
 ### 4.2 Migrate email-item.component
-- [ ] done
+- [x] done
 - File: `src/app/features/mail/email-list/email-item.component.html`
 - Convert:
   - `.email-item` → `flex flex-col gap-1 px-4 py-3.5 border-b border-slate-200 dark:border-slate-700 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800`

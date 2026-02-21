@@ -1,26 +1,29 @@
 <div
-  class="email-item"
-  [class.selected]="selected()"
-  [class.has-attachment]="email().has_attachments"
+  class="flex flex-col gap-1 px-4 py-3.5 border-b border-slate-200 dark:border-slate-700 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+  [class.bg-indigo-50]="selected()"
+  [class.dark:bg-indigo-950]="selected()"
+  [class.border-l-3]="selected()"
+  [class.border-l-indigo-500]="selected()"
+  [class.pl-[calc(1rem-3px)]]="selected()"
   role="button"
   tabindex="0"
   (click)="onClick()"
   (keydown.enter)="onClick()">
-  <div class="email-sender">{{ senderDisplay }}</div>
-  <div class="email-subject">
+  <div class="text-sm font-medium text-slate-900 dark:text-slate-50 truncate">{{ senderDisplay }}</div>
+  <div class="flex items-center gap-1.5 text-[13px] text-slate-600 dark:text-slate-400 truncate">
     @if (email().has_attachments) {
-      <app-icon name="attachment" [size]="14" class="attachment-icon" />
+      <app-icon name="attachment" [size]="14" class="shrink-0 text-slate-400 dark:text-slate-500" />
     }
     {{ email().subject || '(No subject)' }}
   </div>
-  <div class="email-date">{{ dateDisplay }}</div>
+  <div class="text-xs text-slate-400">{{ dateDisplay }}</div>
   @if (email().labels.length > 0) {
-    <div class="email-labels">
+    <div class="flex flex-wrap gap-1 mt-1">
       @for (label of email().labels.slice(0, 3); track label) {
-        <span class="label-tag">{{ label }}</span>
+        <span class="inline-block px-2 py-0.5 text-[11px] text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 rounded-full">{{ label }}</span>
       }
       @if (email().labels.length > 3) {
-        <span class="label-more">+{{ email().labels.length - 3 }}</span>
+        <span class="text-[11px] text-slate-400 dark:text-slate-500">+{{ email().labels.length - 3 }}</span>
       }
     </div>
   }

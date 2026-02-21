@@ -8,7 +8,7 @@ import type { EmailEntry } from '../../../core/models/mbox.models';
   standalone: true,
   imports: [IconComponent],
   templateUrl: './email-item.component.html',
-  styleUrl: './email-item.component.css',
+  host: { class: 'block' },
 })
 export class EmailItemComponent {
   readonly email = input.required<EmailEntry>();
