@@ -7,7 +7,6 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   standalone: true,
   imports: [IconComponent, SpinnerComponent],
   templateUrl: './search-toolbar.component.html',
-  styleUrl: './search-toolbar.component.css',
 })
 export class SearchToolbarComponent {
   readonly isSearching = input.required<boolean>();

@@ -106,7 +106,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 ## Phase 3: Toolbar & Search
 
 ### 3.1 Migrate search-toolbar.component
-- [ ] done
+- [x] done
 - File: `src/app/features/mail/toolbar/search-toolbar.component.html`
 - Convert:
   - `.toolbar` → `flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-900 border-b ...`
