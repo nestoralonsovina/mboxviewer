@@ -16,7 +16,6 @@ import type { AttachmentInfo, EmailEntry } from '../../core/models/mbox.models';
     EmailDetailComponent,
   ],
   templateUrl: './mail-shell.component.html',
-  styleUrl: './mail-shell.component.css',
 })
 export class MailShellComponent {
   protected readonly mbox = inject(MboxStateService);

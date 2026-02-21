@@ -79,7 +79,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 - Remove `styleUrl` from component decorator
 
 ### 2.2 Migrate mail-shell.component
-- [ ] done
+- [x] done
 - File: `src/app/features/mail/mail-shell.component.html`
 - Convert layout classes:
   - `.app-layout` → `flex h-screen`
