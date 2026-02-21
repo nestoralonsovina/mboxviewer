@@ -158,7 +158,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 - Delete `email-detail.component.css`
 
 ### 5.2 Migrate email-meta.component
-- [ ] done
+- [x] done
 - File: `src/app/features/mail/email-detail/email-meta.component.html`
 - Convert:
   - `.detail-meta` → `flex flex-col gap-2 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg mb-4`
