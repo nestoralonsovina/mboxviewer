@@ -231,14 +231,14 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 ## Phase 7: Finalization
 
 ### 7.1 Clean up empty CSS files
-- [ ] done
+- [x] done
 - Remove all CSS files that are now empty or only contain comments
 - Verify all components have `styleUrl` removed or pointing to valid files
 - Run `bun run build` — must succeed with zero errors
 - Run `bun run lint` — must pass
 
 ### 7.2 Full application test
-- [ ] done
+- [x] done
 - Run `bun run tauri dev`
 - Test welcome screen: open file button, recent files list
 - Test mail view: sidebar, email list, search, label filtering
