@@ -146,7 +146,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 ## Phase 5: Email Detail Components
 
 ### 5.1 Migrate email-detail.component
-- [ ] done
+- [x] done
 - File: `src/app/features/mail/email-detail/email-detail.component.html`
 - Convert:
   - `.email-detail` → `flex-1 flex flex-col overflow-hidden bg-white dark:bg-slate-900`

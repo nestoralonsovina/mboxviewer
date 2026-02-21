@@ -10,7 +10,7 @@ import type { AttachmentInfo, EmailBody, EmailEntry } from '../../../core/models
   standalone: true,
   imports: [IconComponent, EmailMetaComponent, EmailBodyComponent, AttachmentsListComponent],
   templateUrl: './email-detail.component.html',
-  styleUrl: './email-detail.component.css',
+  host: { class: 'max-md:fixed max-md:inset-0 max-md:z-50 max-md:flex max-md:flex-col' },
 })
 export class EmailDetailComponent {
   readonly email = input.required<EmailEntry>();
