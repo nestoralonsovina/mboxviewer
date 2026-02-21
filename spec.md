@@ -121,7 +121,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 ## Phase 4: Email List Components
 
 ### 4.1 Migrate email-list.component
-- [ ] done
+- [x] done
 - File: `src/app/features/mail/email-list/email-list.component.ts`
 - Add host class: `block overflow-y-auto bg-white dark:bg-slate-900`
 - Convert:
