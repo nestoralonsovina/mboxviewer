@@ -60,7 +60,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 - Include base styles for html/body
 
 ### 1.3 Verify Tailwind works
-- [ ] done
+- [x] done
 - Run `bun run tauri dev`
 - Temporarily add `class="bg-red-500"` to a visible element
 - Confirm red background appears
