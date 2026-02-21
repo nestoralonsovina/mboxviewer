@@ -72,7 +72,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 ## Phase 2: Core Layout Components
 
 ### 2.1 Migrate app.component styles
-- [ ] done
+- [x] done
 - File: `src/app/app.component.ts`
 - Add `host` property with Tailwind classes: `block h-screen overflow-hidden font-sans text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-slate-900`
 - Delete `src/app/app.component.css`

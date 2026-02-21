@@ -9,7 +9,7 @@ import { MailShellComponent } from './features/mail/mail-shell.component';
   standalone: true,
   imports: [ErrorToastComponent, WelcomeComponent, MailShellComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  host: { class: 'block h-screen overflow-hidden font-sans text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-slate-900' },
 })
 export class AppComponent {
   protected readonly mbox = inject(MboxStateService);
