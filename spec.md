@@ -37,7 +37,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 ## Phase 1: Foundation Setup
 
 ### 1.1 Install Tailwind CSS dependencies
-- [ ] done
+- [x] done
 - Run `bun add tailwindcss @tailwindcss/postcss postcss`
 - Create `.postcssrc.json` in project root:
   ```json
@@ -49,7 +49,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
   ```
 
 ### 1.2 Configure Tailwind theme in styles.css
-- [ ] done
+- [x] done
 - Replace `src/styles.css` with Tailwind import and custom theme
 - Use `@import 'tailwindcss';` at the top
 - Define design tokens using `@theme` block:

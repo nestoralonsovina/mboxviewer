@@ -1,56 +1,44 @@
-/* Design tokens */
-:root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #e9ecef;
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --text-muted: #adb5bd;
-  --border-color: #dee2e6;
-  --accent-color: #0d6efd;
-  --accent-hover: #0b5ed7;
-  --danger-color: #dc3545;
-  --success-color: #198754;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --transition: 150ms ease;
-}
+@import "tailwindcss";
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #242424;
-    --bg-tertiary: #2f2f2f;
-    --text-primary: #f0f0f0;
-    --text-secondary: #a0a0a0;
-    --text-muted: #6c6c6c;
-    --border-color: #3a3a3a;
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, sans-serif;
+
+  --color-accent: oklch(0.585 0.233 264);
+  --color-accent-hover: oklch(0.535 0.233 264);
+  --color-danger: oklch(0.586 0.209 17);
+  --color-success: oklch(0.596 0.145 163);
+
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-elevated: 0 4px 6px rgb(0 0 0 / 0.07), 0 1px 3px rgb(0 0 0 / 0.05);
+
+  --animate-fade-in: fade-in 150ms ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
-/* Global reset and base styles */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-html, body {
+/* Base styles */
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Remove default button/input styles */
-button, input {
+button,
+input {
   font-family: inherit;
 }
 
@@ -65,20 +53,20 @@ button, input {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: theme(--color-slate-300);
+  border-radius: theme(--radius-sm);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: theme(--color-slate-400);
 }
 
 @media (prefers-color-scheme: dark) {
   ::-webkit-scrollbar-thumb {
-    background: #4a4a4a;
+    background: theme(--color-slate-600);
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
-    background: #5a5a5a;
+    background: theme(--color-slate-500);
   }
 }
