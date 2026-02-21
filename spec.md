@@ -181,7 +181,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 - Delete `email-body.component.css`
 
 ### 5.4 Migrate attachments-list.component
-- [ ] done
+- [x] done
 - File: `src/app/features/mail/email-detail/attachments-list.component.html`
 - Convert:
   - `.attachments-section` → `mb-4`
