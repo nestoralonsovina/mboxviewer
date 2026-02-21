@@ -212,7 +212,7 @@ The frontend is an Angular 20 + Tauri 2 desktop app for reading Gmail Takeout `.
 - Delete `welcome.component.css`
 
 ### 6.2 Migrate recent-files-list.component
-- [ ] done
+- [x] done
 - File: `src/app/features/welcome/recent-files-list.component.html`
 - Convert:
   - `.recent-files` → `mt-10 text-left w-full max-w-[400px]`
