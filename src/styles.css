@@ -118,10 +118,17 @@ input {
   font-family: inherit;
 }
 
-/* Focus styles - coral accent ring */
+/* Focus styles - coral accent ring (not for inputs inside containers) */
 :focus-visible {
   outline: 2px solid theme(--color-accent);
   outline-offset: 2px;
+}
+
+/* Remove focus outline from inputs that are inside styled containers */
+input:focus,
+input:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 /* Selection color */
