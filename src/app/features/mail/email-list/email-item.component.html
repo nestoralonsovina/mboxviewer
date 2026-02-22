@@ -1,30 +1,48 @@
 <div
-  class="flex flex-col gap-1 px-4 py-3.5 border-b border-slate-200 dark:border-slate-700 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
-  [class.bg-indigo-50]="selected()"
-  [class.dark:bg-indigo-950]="selected()"
-  [class.border-l-3]="selected()"
-  [class.border-l-indigo-500]="selected()"
-  [class.pl-[calc(1rem-3px)]]="selected()"
+  class="group flex gap-3 px-4 py-3.5 cursor-pointer transition-all duration-150"
+  [class]="selected()
+    ? 'bg-accent-subtle dark:bg-accent/10 border-l-3 border-l-accent pl-[calc(1rem-3px)]'
+    : 'hover:bg-surface-50 dark:hover:bg-surface-800/50'"
   role="button"
   tabindex="0"
   (click)="onClick()"
   (keydown.enter)="onClick()">
-  <div class="text-sm font-medium text-slate-900 dark:text-slate-50 truncate">{{ senderDisplay }}</div>
-  <div class="flex items-center gap-1.5 text-[13px] text-slate-600 dark:text-slate-400 truncate">
-    @if (email().has_attachments) {
-      <app-icon name="attachment" [size]="14" class="shrink-0 text-slate-400 dark:text-slate-500" />
-    }
-    {{ email().subject || '(No subject)' }}
+  
+  <!-- Avatar placeholder -->
+  <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold"
+       [class]="selected() 
+         ? 'bg-accent text-white' 
+         : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 group-hover:bg-surface-200 dark:group-hover:bg-surface-700'">
+    {{ senderDisplay.charAt(0).toUpperCase() }}
   </div>
-  <div class="text-xs text-slate-400">{{ dateDisplay }}</div>
-  @if (email().labels.length > 0) {
-    <div class="flex flex-wrap gap-1 mt-1">
-      @for (label of email().labels.slice(0, 3); track label) {
-        <span class="inline-block px-2 py-0.5 text-[11px] text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 rounded-full">{{ label }}</span>
+  
+  <!-- Content -->
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center justify-between gap-2 mb-0.5">
+      <span class="text-sm font-semibold text-surface-900 dark:text-surface-50 truncate">{{ senderDisplay }}</span>
+      <span class="text-xs text-surface-400 dark:text-surface-500 shrink-0 tabular-nums">{{ dateDisplay }}</span>
+    </div>
+    
+    <div class="flex items-center gap-1.5 text-[13px] text-surface-700 dark:text-surface-300 truncate mb-1">
+      {{ email().subject || '(No subject)' }}
+    </div>
+    
+    <div class="flex items-center gap-2">
+      @if (email().has_attachments) {
+        <span class="inline-flex items-center gap-1 text-[11px] text-surface-500 dark:text-surface-400">
+          <app-icon name="attachment" [size]="12" />
+        </span>
       }
-      @if (email().labels.length > 3) {
-        <span class="text-[11px] text-slate-400 dark:text-slate-500">+{{ email().labels.length - 3 }}</span>
+      @if (email().labels.length > 0) {
+        <div class="flex items-center gap-1">
+          @for (label of email().labels.slice(0, 2); track label) {
+            <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium text-accent bg-accent/10 rounded">{{ label }}</span>
+          }
+          @if (email().labels.length > 2) {
+            <span class="text-[10px] text-surface-400 dark:text-surface-500">+{{ email().labels.length - 2 }}</span>
+          }
+        </div>
       }
     </div>
-  }
+  </div>
 </div>

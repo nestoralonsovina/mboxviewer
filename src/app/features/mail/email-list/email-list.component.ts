@@ -9,7 +9,7 @@ import type { EmailEntry } from '../../../core/models/mbox.models';
   standalone: true,
   imports: [SpinnerComponent, IconComponent, EmailItemComponent],
   templateUrl: './email-list.component.html',
-  host: { class: 'block overflow-y-auto bg-white dark:bg-slate-900' },
+  host: { class: 'block overflow-y-auto bg-white dark:bg-surface-900' },
 })
 export class EmailListComponent implements AfterViewInit, OnDestroy {
   private readonly elementRef = inject(ElementRef);

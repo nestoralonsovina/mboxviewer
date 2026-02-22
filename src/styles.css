@@ -1,18 +1,65 @@
+/* Plus Jakarta Sans - geometric with warmth and personality */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap');
+
 @import "tailwindcss";
 
 @theme {
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, sans-serif;
-
-  --color-accent: oklch(0.585 0.233 264);
-  --color-accent-hover: oklch(0.535 0.233 264);
+  /* Typography - Plus Jakarta Sans for everything */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Warm neutral palette - stone tones instead of cold slate */
+  --color-surface-50: oklch(0.985 0.002 75);
+  --color-surface-100: oklch(0.970 0.004 75);
+  --color-surface-200: oklch(0.923 0.006 75);
+  --color-surface-300: oklch(0.869 0.008 75);
+  --color-surface-400: oklch(0.709 0.012 75);
+  --color-surface-500: oklch(0.553 0.013 75);
+  --color-surface-600: oklch(0.444 0.011 75);
+  --color-surface-700: oklch(0.374 0.010 75);
+  --color-surface-800: oklch(0.268 0.007 75);
+  --color-surface-900: oklch(0.216 0.006 75);
+  --color-surface-950: oklch(0.147 0.004 75);
+  
+  /* Accent - Coral/Salmon: warm, friendly, distinctive */
+  --color-accent: oklch(0.65 0.18 25);
+  --color-accent-hover: oklch(0.58 0.19 25);
+  --color-accent-subtle: oklch(0.94 0.04 25);
+  --color-accent-muted: oklch(0.85 0.08 25);
+  
+  /* Secondary accent - Teal for variety */
+  --color-secondary: oklch(0.65 0.12 195);
+  --color-secondary-subtle: oklch(0.94 0.03 195);
+  
+  /* Semantic colors */
   --color-danger: oklch(0.586 0.209 17);
-  --color-success: oklch(0.596 0.145 163);
+  --color-success: oklch(0.65 0.17 155);
+  --color-warning: oklch(0.75 0.15 85);
+  
+  /* Shadows - warmer, softer */
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.05), 0 2px 4px rgb(0 0 0 / 0.03);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.06), 0 4px 6px rgb(0 0 0 / 0.03);
+  --shadow-xl: 0 20px 25px rgb(0 0 0 / 0.08), 0 8px 10px rgb(0 0 0 / 0.04);
+  
+  /* Accent shadow for buttons/cards */
+  --shadow-accent: 0 4px 14px oklch(0.65 0.18 25 / 0.25);
+  
+  /* Border radius - slightly softer */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  
+  /* Spacing scale adjustments */
+  --spacing-sidebar: 260px;
+  --spacing-sidebar-collapsed: 56px;
 
-  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.05);
-  --shadow-elevated: 0 4px 6px rgb(0 0 0 / 0.07), 0 1px 3px rgb(0 0 0 / 0.05);
-
-  --animate-fade-in: fade-in 150ms ease-out;
+  /* Animations */
+  --animate-fade-in: fade-in 200ms ease-out;
+  --animate-slide-in: slide-in 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-scale-in: scale-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
 
   @keyframes fade-in {
     from {
@@ -22,6 +69,28 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+  
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
     }
   }
 }
@@ -35,6 +104,13 @@ body {
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: theme(--color-surface-50);
+}
+
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background: theme(--color-surface-950);
+  }
 }
 
 button,
@@ -42,10 +118,22 @@ input {
   font-family: inherit;
 }
 
-/* Scrollbar styling */
+/* Focus styles - coral accent ring */
+:focus-visible {
+  outline: 2px solid theme(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Selection color */
+::selection {
+  background: theme(--color-accent-subtle);
+  color: theme(--color-surface-900);
+}
+
+/* Scrollbar styling - thinner, subtler */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -53,20 +141,97 @@ input {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: theme(--color-slate-300);
-  border-radius: theme(--radius-sm);
+  background: theme(--color-surface-300);
+  border-radius: theme(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: theme(--color-slate-400);
+  background: theme(--color-surface-400);
 }
 
 @media (prefers-color-scheme: dark) {
   ::-webkit-scrollbar-thumb {
-    background: theme(--color-slate-600);
+    background: theme(--color-surface-700);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: theme(--color-slate-500);
+    background: theme(--color-surface-600);
+  }
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition-property: background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+/* Email HTML content styling */
+.email-content {
+  font-family: theme(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: theme(--color-surface-700);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.email-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.email-content table {
+  max-width: 100%;
+  border-collapse: collapse;
+}
+
+
+
+.email-content blockquote {
+  margin: 12px 0;
+  padding-left: 16px;
+  border-left: 3px solid theme(--color-surface-200);
+  color: theme(--color-surface-500);
+}
+
+.email-content pre,
+.email-content code {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.email-content h1,
+.email-content h2,
+.email-content h3,
+.email-content h4,
+.email-content h5,
+.email-content h6 {
+  color: theme(--color-surface-900);
+  margin: 1em 0 0.5em 0;
+}
+
+.email-content p {
+  margin: 0 0 1em 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .email-content {
+    color: theme(--color-surface-300);
+  }
+  
+  .email-content h1,
+  .email-content h2,
+  .email-content h3,
+  .email-content h4,
+  .email-content h5,
+  .email-content h6 {
+    color: theme(--color-surface-100);
+  }
+  
+  .email-content blockquote {
+    border-left-color: theme(--color-surface-700);
   }
 }

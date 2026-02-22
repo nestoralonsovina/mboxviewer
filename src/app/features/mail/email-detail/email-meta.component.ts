@@ -7,46 +7,49 @@ import type { EmailEntry } from '../../../core/models/mbox.models';
   standalone: true,
   template: `
     @let email = this.email();
-    <div class="flex flex-col gap-2 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg mb-4">
-      <div class="flex gap-3 text-sm">
-        <span class="shrink-0 w-15 text-slate-500">From:</span>
-        <span class="text-slate-900 dark:text-slate-50 break-words">
+    <div class="flex items-start gap-4 mb-6">
+      <!-- Avatar -->
+      <div class="shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold bg-gradient-to-br from-accent to-accent-hover text-white shadow-sm">
+        {{ (email.from_name || email.from_address).charAt(0).toUpperCase() }}
+      </div>
+      
+      <!-- Info -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-1">
+          <span class="text-base font-semibold text-surface-900 dark:text-surface-50">
+            {{ email.from_name || email.from_address }}
+          </span>
           @if (email.from_name) {
-            {{ email.from_name }} &lt;{{ email.from_address }}&gt;
-          } @else {
-            {{ email.from_address }}
+            <span class="text-sm text-surface-400 dark:text-surface-500 truncate">
+              &lt;{{ email.from_address }}&gt;
+            </span>
           }
-        </span>
-      </div>
-      @if (email.to.length > 0) {
-        <div class="flex gap-3 text-sm">
-          <span class="shrink-0 w-15 text-slate-500">To:</span>
-          <span class="text-slate-900 dark:text-slate-50 break-words">
-            @for (to of email.to; track to.address; let last = $last) {
-              @if (to.name) {
-                {{ to.name }} &lt;{{ to.address }}&gt;
-              } @else {
-                {{ to.address }}
+        </div>
+        
+        <div class="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400 mb-2">
+          <span>{{ formattedDate() }}</span>
+          @if (email.to.length > 0) {
+            <span class="text-surface-300 dark:text-surface-600">•</span>
+            <span class="truncate">
+              To: 
+              @for (to of email.to.slice(0, 2); track to.address; let last = $last) {
+                {{ to.name || to.address }}@if (!last && email.to.length > 1) {, }
               }
-              @if (!last) {, }
-            }
-          </span>
+              @if (email.to.length > 2) {
+                <span class="text-surface-400">+{{ email.to.length - 2 }} more</span>
+              }
+            </span>
+          }
         </div>
-      }
-      <div class="flex gap-3 text-sm">
-        <span class="shrink-0 w-15 text-slate-500">Date:</span>
-        <span class="text-slate-900 dark:text-slate-50 break-words">{{ formattedDate() }}</span>
-      </div>
-      @if (email.labels.length > 0) {
-        <div class="flex gap-3 text-sm">
-          <span class="shrink-0 w-15 text-slate-500">Labels:</span>
-          <span class="flex flex-wrap gap-1.5">
+        
+        @if (email.labels.length > 0) {
+          <div class="flex flex-wrap gap-1.5">
             @for (label of email.labels; track label) {
-              <span class="inline-block px-2 py-0.5 text-[11px] text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 rounded-full">{{ label }}</span>
+              <span class="inline-block px-2 py-0.5 text-[11px] font-medium text-accent bg-accent/10 rounded">{{ label }}</span>
             }
-          </span>
-        </div>
-      }
+          </div>
+        }
+      </div>
     </div>
   `,
 })

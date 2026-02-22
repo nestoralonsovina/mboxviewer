@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MboxStateService } from '../../state/mbox-state.service';
+import { UiStateService } from '../../state/ui-state.service';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SearchToolbarComponent } from './toolbar/search-toolbar.component';
 import { EmailListComponent } from './email-list/email-list.component';
@@ -19,6 +20,7 @@ import type { AttachmentInfo, EmailEntry } from '../../core/models/mbox.models';
 })
 export class MailShellComponent {
   protected readonly mbox = inject(MboxStateService);
+  protected readonly ui = inject(UiStateService);
 
   async onOpenFile(): Promise<void> {
     await this.mbox.openFile();
@@ -57,5 +59,9 @@ export class MailShellComponent {
 
   async onLoadMore(): Promise<void> {
     await this.mbox.loadMoreEmails();
+  }
+
+  onToggleSidebar(): void {
+    this.ui.toggleSidebar();
   }
 }

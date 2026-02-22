@@ -1,20 +1,31 @@
-<div class="flex items-center justify-center h-screen bg-gradient-to-br from-slate-100 to-white dark:from-slate-900 dark:to-slate-800">
-  <div class="text-center p-12">
-    <div class="text-indigo-500 mb-6">
-      <app-icon name="mail" [size]="80" [strokeWidth]="1.5" />
+<div class="flex items-center justify-center h-screen bg-surface-50 dark:bg-surface-950">
+  <!-- Subtle decorative gradient orb -->
+  <div class="absolute top-1/4 -left-32 w-96 h-96 bg-gradient-to-br from-accent/20 to-secondary/10 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
+  <div class="absolute bottom-1/4 -right-32 w-80 h-80 bg-gradient-to-tl from-secondary/15 to-accent/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+  
+  <div class="relative text-center p-12 animate-fade-in">
+    <!-- Logo mark with accent color -->
+    <div class="inline-flex items-center justify-center w-20 h-20 mb-8 bg-gradient-to-br from-accent to-accent-hover rounded-2xl shadow-accent text-white">
+      <app-icon name="mail" [size]="40" [strokeWidth]="1.5" />
     </div>
-    <h1 class="text-3xl font-semibold text-slate-900 dark:text-slate-50 mb-2">MBOX Viewer</h1>
-    <p class="text-slate-500 mb-8">Open Gmail Takeout exports and other MBOX files</p>
+    
+    <h1 class="text-4xl font-bold text-surface-900 dark:text-surface-50 mb-3 tracking-tight">
+      MBOX Viewer
+    </h1>
+    <p class="text-lg text-surface-500 dark:text-surface-400 mb-10 max-w-sm mx-auto">
+      Open and explore your Gmail Takeout exports with ease
+    </p>
 
     @if (isLoading()) {
-      <div class="flex items-center gap-3 text-slate-500 justify-center">
+      <div class="flex items-center gap-3 text-surface-500 justify-center">
         <app-spinner />
-        <span>Loading...</span>
+        <span class="text-sm font-medium">Opening file...</span>
       </div>
     } @else {
       <button
-        class="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-white bg-indigo-500 border-none rounded-lg cursor-pointer hover:bg-indigo-600 disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+        class="group inline-flex items-center gap-2.5 px-7 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-accent to-accent-hover border-none rounded-xl cursor-pointer shadow-accent hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
         (click)="openFile.emit()">
+        <app-icon name="folder" [size]="20" />
         Open MBOX File
       </button>
 

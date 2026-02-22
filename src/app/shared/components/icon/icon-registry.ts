@@ -80,6 +80,33 @@ const ICON_DEFINITIONS: Readonly<Record<string, IconDefinition>> = {
       '<line x1="12" y1="16" x2="12.01" y2="16"/>',
     ],
   },
+  'chevron-left': {
+    viewBox: '0 0 24 24',
+    paths: [
+      '<polyline points="15 18 9 12 15 6"/>',
+    ],
+  },
+  'chevron-right': {
+    viewBox: '0 0 24 24',
+    paths: [
+      '<polyline points="9 18 15 12 9 6"/>',
+    ],
+  },
+  'panel-left': {
+    viewBox: '0 0 24 24',
+    paths: [
+      '<rect width="18" height="18" x="3" y="3" rx="2"/>',
+      '<path d="M9 3v18"/>',
+    ],
+  },
+  'menu': {
+    viewBox: '0 0 24 24',
+    paths: [
+      '<line x1="4" y1="12" x2="20" y2="12"/>',
+      '<line x1="4" y1="6" x2="20" y2="6"/>',
+      '<line x1="4" y1="18" x2="20" y2="18"/>',
+    ],
+  },
 };
 
 type IconName = keyof typeof ICON_DEFINITIONS;

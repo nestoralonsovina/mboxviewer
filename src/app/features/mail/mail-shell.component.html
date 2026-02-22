@@ -1,4 +1,4 @@
-<div class="flex h-screen max-md:flex-col">
+<div class="flex h-screen bg-surface-100 dark:bg-surface-950 max-md:flex-col">
   <!-- Sidebar -->
   <app-sidebar
     [stats]="mbox.stats()"
@@ -6,12 +6,16 @@
     [selectedLabel]="mbox.selectedLabel()"
     [searchQuery]="mbox.searchQuery()"
     [currentPath]="mbox.currentPath()"
+    [collapsed]="ui.sidebarCollapsed()"
     (openFile)="onOpenFile()"
     (closeFile)="onCloseFile()"
-    (labelClick)="onLabelClick($event)" />
+    (labelClick)="onLabelClick($event)"
+    (toggleCollapse)="onToggleSidebar()" />
 
   <!-- Main Content -->
-  <main class="flex-1 flex flex-col min-w-0">
+  <main class="flex-1 flex flex-col min-w-0 bg-white dark:bg-surface-900 max-md:rounded-none"
+        [class.rounded-l-2xl]="!ui.sidebarCollapsed()"
+        [class.shadow-lg]="!ui.sidebarCollapsed()">
     <!-- Toolbar -->
     <app-search-toolbar
       [isSearching]="mbox.isSearching()"
@@ -25,7 +29,7 @@
       <!-- Email List -->
       <app-email-list
         [class]="mbox.selectedEmail()
-          ? 'w-2/5 min-w-[300px] max-md:hidden border-r border-slate-200 dark:border-slate-700'
+          ? 'w-2/5 min-w-[320px] max-md:hidden border-r border-surface-200 dark:border-surface-800'
           : 'flex-1'"
         [emails]="mbox.emails()"
         [selectedEmail]="mbox.selectedEmail()"

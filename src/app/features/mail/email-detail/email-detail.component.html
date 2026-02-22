@@ -1,28 +1,81 @@
-<div class="flex-1 flex flex-col overflow-hidden bg-white dark:bg-slate-900">
-  <div class="flex items-center px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+@let currentEmail = email();
+@let body = emailBody();
+
+<div class="h-full flex flex-col bg-white dark:bg-surface-900">
+  
+  <!-- Back button bar -->
+  <div class="shrink-0 flex items-center gap-3 px-5 py-3 border-b border-surface-200 dark:border-surface-800">
     <button
-      class="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 bg-transparent border border-slate-200 dark:border-slate-700 rounded cursor-pointer transition-all duration-150 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-800"
+      class="flex items-center justify-center w-8 h-8 text-surface-500 bg-transparent border-none rounded-lg cursor-pointer transition-colors hover:text-surface-900 dark:hover:text-surface-50 hover:bg-surface-100 dark:hover:bg-surface-800"
       (click)="onClose()">
-      <app-icon name="arrow-left" [size]="20" />
-      Back
+      <app-icon name="arrow-left" [size]="18" />
     </button>
+    <span class="text-sm font-medium text-surface-500">Back</span>
   </div>
 
-  <div class="flex-1 overflow-y-auto p-6">
-    @let currentEmail = email();
-    <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-4 mt-0">{{ currentEmail.subject || '(No subject)' }}</h2>
+  <!-- Scrollable content -->
+  <div class="flex-1 overflow-y-auto">
+    
+    <!-- Subject + sender info -->
+    <div class="px-6 py-5 border-b border-surface-100 dark:border-surface-800">
+      <h1 class="text-lg font-bold text-surface-900 dark:text-surface-50 m-0 mb-4">
+        {{ currentEmail.subject || '(No subject)' }}
+      </h1>
+      
+      <div class="flex items-start gap-3">
+        <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold bg-accent text-white">
+          {{ (currentEmail.from_name || currentEmail.from_address).charAt(0).toUpperCase() }}
+        </div>
+        <div class="min-w-0">
+          <div class="text-sm font-semibold text-surface-900 dark:text-surface-50">
+            {{ currentEmail.from_name || currentEmail.from_address }}
+          </div>
+          <div class="text-xs text-surface-500 mt-0.5">
+            {{ formattedDate() }}
+            @if (currentEmail.to.length > 0) {
+              · To: {{ currentEmail.to[0].name || currentEmail.to[0].address }}
+              @if (currentEmail.to.length > 1) {
+                <span class="text-surface-400">+{{ currentEmail.to.length - 1 }}</span>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <app-email-meta [email]="currentEmail" />
-
-    @let body = emailBody();
-    @if (body) {
-      <app-attachments-list
-        [attachments]="body.attachments"
-        (downloadAttachment)="onDownloadAttachment($event)" />
+    <!-- Attachments -->
+    @if (body && body.attachments.length > 0) {
+      <div class="px-6 py-3 bg-surface-50 dark:bg-surface-800/50 border-b border-surface-100 dark:border-surface-800">
+        <div class="flex items-center gap-2 flex-wrap">
+          <app-icon name="attachment" [size]="14" class="text-surface-400" />
+          @for (attachment of body.attachments; track attachment.part_index) {
+            <button
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-surface-600 dark:text-surface-300 bg-white dark:bg-surface-700 border border-surface-200 dark:border-surface-600 rounded cursor-pointer hover:border-accent hover:text-accent transition-colors"
+              (click)="onDownloadAttachment(attachment)">
+              {{ attachment.filename }}
+              <app-icon name="download" [size]="12" />
+            </button>
+          }
+        </div>
+      </div>
     }
 
-    <app-email-body
-      [body]="body"
-      [isLoading]="isLoading()" />
+    <!-- Email body -->
+    @if (isLoading() && !body) {
+      <div class="flex items-center justify-center gap-3 p-12 text-surface-400">
+        <app-spinner />
+        <span class="text-sm">Loading...</span>
+      </div>
+    } @else if (body) {
+      @if (sanitizedHtml(); as html) {
+        <div class="email-content p-6" [innerHTML]="html"></div>
+      } @else if (body.text) {
+        <div class="p-6 text-sm leading-relaxed text-surface-700 dark:text-surface-300 whitespace-pre-wrap">{{ body.text }}</div>
+      } @else {
+        <div class="p-8 text-center text-surface-400 text-sm">No content</div>
+      }
+    } @else {
+      <div class="p-8 text-center text-surface-400 text-sm">Select an email to view</div>
+    }
   </div>
 </div>
