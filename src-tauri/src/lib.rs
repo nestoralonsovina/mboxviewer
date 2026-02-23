@@ -8,7 +8,6 @@ mod state;
 use std::path::PathBuf;
 
 use error::AppError;
-use mboxshell::search;
 use models::*;
 use services::MboxService;
 use state::AppState;
@@ -97,67 +96,35 @@ async fn search_emails(
     query: String,
     limit: Option<usize>,
     state: State<'_, AppState>,
-) -> Result<SearchResults, String> {
+) -> Result<SearchResults, AppError> {
     // Clone entries and path to release the lock quickly
-    let (entries, mbox_path) = {
+    let service = {
         let entries_guard = state.entries.lock().unwrap();
         let path_guard = state.mbox_path.lock().unwrap();
-        
-        if entries_guard.is_empty() {
-            return Err("No MBOX file is currently open".to_string());
-        }
-        
-        let path = path_guard.clone().ok_or("No MBOX file path available")?;
-        (entries_guard.clone(), path)
+
+        let mut svc = MboxService::new();
+        svc.entries = entries_guard.clone();
+        svc.mbox_path = path_guard.clone();
+        svc
     };
 
     // Run search in a blocking task to not block the main thread
-    let result = tokio::task::spawn_blocking(move || {
-        // Use the high-level execute function which handles both metadata and fulltext search
-        let (_parsed_query, matching_indices) = search::execute(
-            &mbox_path,
-            &entries,
-            &query,
-            None, // No progress callback for now
-        ).map_err(|e| e.to_string())?;
-        
-        let total_count = matching_indices.len();
-        
-        // Limit results to avoid serialization overhead
-        let max_results = limit.unwrap_or(500);
-        let results: Vec<EmailEntry> = matching_indices
-            .into_iter()
-            .take(max_results)
-            .map(|i| EmailEntry::from(&entries[i]))
-            .collect();
+    let result = tokio::task::spawn_blocking(move || service.search(&query, limit))
+        .await
+        .map_err(|e| AppError::MboxShell(format!("Search task failed: {e}")))?;
 
-        Ok::<SearchResults, String>(SearchResults {
-            emails: results,
-            total_count,
-        })
-    })
-    .await
-    .map_err(|e| format!("Search task failed: {}", e))??;
-
-    Ok(result)
+    result
 }
 
 /// Get emails filtered by label
 #[tauri::command]
-fn get_emails_by_label(label: String, state: State<'_, AppState>) -> Result<Vec<EmailEntry>, String> {
+fn get_emails_by_label(label: String, state: State<'_, AppState>) -> Result<Vec<EmailEntry>, AppError> {
     let entries = state.entries.lock().unwrap();
 
-    if entries.is_empty() {
-        return Err("No MBOX file is currently open".to_string());
-    }
+    let mut service = MboxService::new();
+    service.entries = entries.clone();
 
-    let results: Vec<EmailEntry> = entries
-        .iter()
-        .filter(|e| e.labels.iter().any(|l| l.eq_ignore_ascii_case(&label)))
-        .map(EmailEntry::from)
-        .collect();
-
-    Ok(results)
+    service.get_emails_by_label(&label)
 }
 
 /// Download an attachment from an email
@@ -212,24 +179,13 @@ fn close_mbox(state: State<'_, AppState>) -> Result<(), String> {
 
 /// Get all unique labels from the MBOX file
 #[tauri::command]
-fn get_labels(state: State<'_, AppState>) -> Result<Vec<LabelCount>, String> {
+fn get_labels(state: State<'_, AppState>) -> Result<Vec<LabelCount>, AppError> {
     let entries = state.entries.lock().unwrap();
 
-    let mut label_counts: std::collections::HashMap<String, usize> =
-        std::collections::HashMap::new();
-    for entry in entries.iter() {
-        for label in &entry.labels {
-            *label_counts.entry(label.clone()).or_insert(0) += 1;
-        }
-    }
+    let mut service = MboxService::new();
+    service.entries = entries.clone();
 
-    let mut labels: Vec<LabelCount> = label_counts
-        .into_iter()
-        .map(|(label, count)| LabelCount { label, count })
-        .collect();
-    labels.sort_by(|a, b| b.count.cmp(&a.count));
-
-    Ok(labels)
+    Ok(service.get_labels())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

@@ -111,7 +111,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 2.4 Move search and filter logic to MboxService
-- [ ] done
+- [x] done
 - Add `pub fn search(&self, query: &str, limit: Option<usize>) -> Result<SearchResults, AppError>`
 - Add `pub fn get_emails_by_label(&self, label: &str) -> Result<Vec<EmailEntry>, AppError>`
 - Add `pub fn get_labels(&self) -> Vec<LabelCount>`

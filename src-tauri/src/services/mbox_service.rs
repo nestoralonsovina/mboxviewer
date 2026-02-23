@@ -8,10 +8,11 @@ use std::path::{Path, PathBuf};
 
 use mboxshell::index::builder::build_index;
 use mboxshell::model::mail::MailEntry;
+use mboxshell::search;
 use mboxshell::store::reader::MboxStore;
 
 use crate::error::AppError;
-use crate::models::{EmailBody, EmailEntry, LabelCount, MboxStats};
+use crate::models::{EmailBody, EmailEntry, LabelCount, MboxStats, SearchResults};
 
 /// Manages the state and operations for an opened MBOX file.
 ///
@@ -113,6 +114,58 @@ impl MboxService {
         Ok(EmailBody::from(body))
     }
 
+    pub fn get_labels(&self) -> Vec<LabelCount> {
+        self.count_labels()
+    }
+
+    pub fn get_emails_by_label(&self, label: &str) -> Result<Vec<EmailEntry>, AppError> {
+        if self.entries.is_empty() {
+            return Err(AppError::Validation(
+                "No MBOX file is currently open".to_string(),
+            ));
+        }
+
+        let results = self
+            .entries
+            .iter()
+            .filter(|e| e.labels.iter().any(|l| l.eq_ignore_ascii_case(label)))
+            .map(EmailEntry::from)
+            .collect();
+
+        Ok(results)
+    }
+
+    pub fn search(&self, query: &str, limit: Option<usize>) -> Result<SearchResults, AppError> {
+        if self.entries.is_empty() {
+            return Err(AppError::Validation(
+                "No MBOX file is currently open".to_string(),
+            ));
+        }
+
+        let mbox_path = self
+            .mbox_path
+            .as_ref()
+            .ok_or_else(|| AppError::Validation("No MBOX file path available".to_string()))?;
+
+        let (_parsed_query, matching_indices) =
+            search::execute(mbox_path, &self.entries, query, None)
+                .map_err(|e| AppError::MboxShell(e.to_string()))?;
+
+        let total_count = matching_indices.len();
+        let max_results = limit.unwrap_or(500);
+
+        let emails = matching_indices
+            .into_iter()
+            .take(max_results)
+            .map(|i| EmailEntry::from(&self.entries[i]))
+            .collect();
+
+        Ok(SearchResults {
+            emails,
+            total_count,
+        })
+    }
+
     fn count_labels(&self) -> Vec<LabelCount> {
         let mut label_counts: HashMap<String, usize> = HashMap::new();
         for entry in &self.entries {
@@ -211,5 +264,34 @@ mod tests {
                                   // This should fail with validation since no file is open (empty entries)
         let result = service.get_email_body(5);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn get_labels_returns_empty_when_no_file_open() {
+        let service = MboxService::new();
+        let labels = service.get_labels();
+        assert!(labels.is_empty());
+    }
+
+    #[test]
+    fn get_emails_by_label_returns_validation_error_when_no_file_open() {
+        let service = MboxService::new();
+        let result = service.get_emails_by_label("Inbox");
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Validation error: No MBOX file is currently open"
+        );
+    }
+
+    #[test]
+    fn search_returns_validation_error_when_no_file_open() {
+        let service = MboxService::new();
+        let result = service.search("test", None);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Validation error: No MBOX file is currently open"
+        );
     }
 }
