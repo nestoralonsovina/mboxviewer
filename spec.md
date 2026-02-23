@@ -142,7 +142,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 3.2 Update AppState to hold MboxService
-- [ ] done
+- [x] done
 - Modify `state.rs`: `AppState { service: Mutex<MboxService> }`
 - Update all commands to access `state.service.lock()`
 - Remove redundant fields from `AppState`

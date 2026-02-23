@@ -218,6 +218,18 @@ impl MboxService {
         self.store.is_some()
     }
 
+    /// Create a lightweight snapshot with entries and path for search.
+    ///
+    /// Search only needs entries and the mbox path (no store).
+    /// This allows releasing the main lock before `spawn_blocking`.
+    pub fn snapshot_for_search(source: &MboxService) -> Self {
+        Self {
+            mbox_path: source.mbox_path.clone(),
+            entries: source.entries.clone(),
+            store: None,
+        }
+    }
+
     fn count_labels(&self) -> Vec<LabelCount> {
         let mut label_counts: HashMap<String, usize> = HashMap::new();
         for entry in &self.entries {

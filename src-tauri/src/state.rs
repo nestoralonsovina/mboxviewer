@@ -1,27 +1,20 @@
 //! Application state management for mboxviewer.
 
-use std::path::PathBuf;
 use std::sync::Mutex;
 
-use mboxshell::model::mail::MailEntry;
-use mboxshell::store::reader::MboxStore;
+use crate::services::MboxService;
 
-/// Application state holding the currently open MBOX file
+/// Application state wrapping the MBOX service in a thread-safe mutex.
+///
+/// Commands lock `service` to access all MBOX operations.
 pub struct AppState {
-    /// Path to the currently open MBOX file
-    pub mbox_path: Mutex<Option<PathBuf>>,
-    /// Indexed mail entries
-    pub entries: Mutex<Vec<MailEntry>>,
-    /// MBOX store for reading message bodies
-    pub store: Mutex<Option<MboxStore>>,
+    pub service: Mutex<MboxService>,
 }
 
 impl Default for AppState {
     fn default() -> Self {
         Self {
-            mbox_path: Mutex::new(None),
-            entries: Mutex::new(Vec::new()),
-            store: Mutex::new(None),
+            service: Mutex::new(MboxService::new()),
         }
     }
 }
@@ -31,23 +24,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn default_has_no_mbox_path() {
+    fn default_service_is_not_open() {
         let state = AppState::default();
-        let path = state.mbox_path.lock().unwrap();
-        assert!(path.is_none());
+        let service = state.service.lock().unwrap();
+        assert!(!service.is_open());
     }
 
     #[test]
-    fn default_has_empty_entries() {
+    fn default_service_has_zero_emails() {
         let state = AppState::default();
-        let entries = state.entries.lock().unwrap();
-        assert!(entries.is_empty());
-    }
-
-    #[test]
-    fn default_has_no_store() {
-        let state = AppState::default();
-        let store = state.store.lock().unwrap();
-        assert!(store.is_none());
+        let service = state.service.lock().unwrap();
+        assert_eq!(service.get_email_count(), 0);
     }
 }
