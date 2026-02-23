@@ -166,6 +166,58 @@ impl MboxService {
         })
     }
 
+    pub fn get_attachment(
+        &mut self,
+        email_index: usize,
+        attachment_index: usize,
+    ) -> Result<Vec<u8>, AppError> {
+        if self.entries.is_empty() {
+            return Err(AppError::Validation(
+                "No MBOX file is currently open".to_string(),
+            ));
+        }
+
+        if email_index >= self.entries.len() {
+            return Err(AppError::Validation(format!(
+                "Invalid email index: {email_index}"
+            )));
+        }
+
+        let store = self
+            .store
+            .as_mut()
+            .ok_or_else(|| AppError::Validation("MBOX store not initialized".to_string()))?;
+
+        let entry = &self.entries[email_index];
+        let body = store
+            .get_message(entry)
+            .map_err(|e| AppError::MboxShell(e.to_string()))?;
+
+        if attachment_index >= body.attachments.len() {
+            return Err(AppError::Validation(format!(
+                "Invalid attachment index: {attachment_index}"
+            )));
+        }
+
+        let attachment_meta = body.attachments[attachment_index].clone();
+
+        let attachment_data = store
+            .get_attachment(entry, &attachment_meta)
+            .map_err(|e| AppError::MboxShell(e.to_string()))?;
+
+        Ok(attachment_data)
+    }
+
+    pub fn close(&mut self) {
+        self.mbox_path = None;
+        self.entries = Vec::new();
+        self.store = None;
+    }
+
+    pub fn is_open(&self) -> bool {
+        self.store.is_some()
+    }
+
     fn count_labels(&self) -> Vec<LabelCount> {
         let mut label_counts: HashMap<String, usize> = HashMap::new();
         for entry in &self.entries {
@@ -293,5 +345,31 @@ mod tests {
             result.unwrap_err().to_string(),
             "Validation error: No MBOX file is currently open"
         );
+    }
+
+    #[test]
+    fn get_attachment_returns_validation_error_when_no_file_open() {
+        let mut service = MboxService::new();
+        let result = service.get_attachment(0, 0);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Validation error: No MBOX file is currently open"
+        );
+    }
+
+    #[test]
+    fn is_open_returns_false_when_no_file_open() {
+        let service = MboxService::new();
+        assert!(!service.is_open());
+    }
+
+    #[test]
+    fn close_resets_state_to_initial() {
+        let mut service = MboxService::new();
+        service.close();
+        assert!(service.mbox_path.is_none());
+        assert!(service.entries.is_empty());
+        assert!(service.store.is_none());
     }
 }

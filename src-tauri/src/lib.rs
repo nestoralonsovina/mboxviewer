@@ -133,47 +133,32 @@ fn get_attachment(
     email_index: usize,
     attachment_index: usize,
     state: State<'_, AppState>,
-) -> Result<Vec<u8>, String> {
+) -> Result<Vec<u8>, AppError> {
     let entries = state.entries.lock().unwrap();
     let mut store_guard = state.store.lock().unwrap();
 
-    if entries.is_empty() {
-        return Err("No MBOX file is currently open".to_string());
-    }
+    let mut service = MboxService::new();
+    service.entries = entries.clone();
+    service.store = store_guard.take();
 
-    if email_index >= entries.len() {
-        return Err(format!("Invalid email index: {}", email_index));
-    }
+    let result = service.get_attachment(email_index, attachment_index);
 
-    let store = store_guard
-        .as_mut()
-        .ok_or("MBOX store not initialized")?;
-    let entry = &entries[email_index];
+    // Return the store to AppState
+    *store_guard = service.store.take();
 
-    // First get the body to access attachment metadata
-    let body = store.get_message(entry).map_err(|e| e.to_string())?;
-
-    if attachment_index >= body.attachments.len() {
-        return Err(format!("Invalid attachment index: {}", attachment_index));
-    }
-
-    // Clone the attachment metadata so we can release the borrow on body
-    let attachment_meta = body.attachments[attachment_index].clone();
-    
-    // Now we can use store again
-    let attachment_data = store
-        .get_attachment(entry, &attachment_meta)
-        .map_err(|e| e.to_string())?;
-
-    Ok(attachment_data)
+    result
 }
 
 /// Close the currently open MBOX file
 #[tauri::command]
-fn close_mbox(state: State<'_, AppState>) -> Result<(), String> {
-    *state.mbox_path.lock().unwrap() = None;
-    *state.entries.lock().unwrap() = Vec::new();
-    *state.store.lock().unwrap() = None;
+fn close_mbox(state: State<'_, AppState>) -> Result<(), AppError> {
+    let mut service = MboxService::new();
+    service.mbox_path = state.mbox_path.lock().unwrap().take();
+    service.entries = std::mem::take(&mut *state.entries.lock().unwrap());
+    service.store = state.store.lock().unwrap().take();
+
+    service.close();
+
     Ok(())
 }
 

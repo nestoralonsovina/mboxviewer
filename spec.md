@@ -120,7 +120,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 2.5 Move attachment and close logic to MboxService
-- [ ] done
+- [x] done
 - Add `pub fn get_attachment(&mut self, email_index: usize, attachment_index: usize) -> Result<Vec<u8>, AppError>`
 - Add `pub fn close(&mut self)`
 - Add `pub fn is_open(&self) -> bool`
