@@ -63,7 +63,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 1.2 Create models/mod.rs and move DTOs
-- [ ] done
+- [x] done
 - Create `src-tauri/src/models/` directory
 - Create `models/mod.rs` with re-exports
 - Create `models/email.rs` with: `EmailEntry`, `EmailAddress`, `EmailBody`, `AttachmentInfo`
