@@ -1,8 +1,11 @@
 <div class="flex items-center justify-center h-screen bg-surface-50 dark:bg-surface-950 relative">
-  <!-- Language switcher -->
-  <div class="absolute top-4 right-4">
-    <app-language-switcher />
-  </div>
+  <!-- Settings button -->
+  <button
+    class="absolute top-4 right-4 flex items-center justify-center w-10 h-10 text-surface-500 bg-surface-100 dark:bg-surface-800 border-none rounded-lg cursor-pointer transition-colors hover:text-surface-900 dark:hover:text-surface-50 hover:bg-surface-200 dark:hover:bg-surface-700"
+    [title]="'PREFERENCES.TITLE' | translate"
+    (click)="openPreferences.emit()">
+    <app-icon name="settings" [size]="20" />
+  </button>
 
   <!-- Subtle decorative gradient orb -->
   <div class="absolute top-1/4 -left-32 w-96 h-96 bg-gradient-to-br from-accent/20 to-secondary/10 rounded-full blur-3xl opacity-60 pointer-events-none"></div>

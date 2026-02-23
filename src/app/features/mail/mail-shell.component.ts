@@ -1,7 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { MboxStateService } from '../../state/mbox-state.service';
-import { UiStateService } from '../../state/ui-state.service';
-import { SidebarComponent } from './sidebar/sidebar.component';
 import { SearchToolbarComponent } from './toolbar/search-toolbar.component';
 import { EmailListComponent } from './email-list/email-list.component';
 import { EmailDetailComponent } from './email-detail/email-detail.component';
@@ -10,17 +8,11 @@ import type { AttachmentInfo, EmailEntry } from '../../core/models/mbox.models';
 @Component({
   selector: 'app-mail-shell',
   standalone: true,
-  imports: [
-    SidebarComponent,
-    SearchToolbarComponent,
-    EmailListComponent,
-    EmailDetailComponent,
-  ],
+  imports: [SearchToolbarComponent, EmailListComponent, EmailDetailComponent],
   templateUrl: './mail-shell.component.html',
 })
 export class MailShellComponent {
   protected readonly mbox = inject(MboxStateService);
-  protected readonly ui = inject(UiStateService);
 
   async onOpenFile(): Promise<void> {
     await this.mbox.openFile();
@@ -36,10 +28,6 @@ export class MailShellComponent {
 
   onClearSearch(): void {
     this.mbox.search('');
-  }
-
-  async onLabelClick(label: string | null): Promise<void> {
-    await this.mbox.filterByLabel(label);
   }
 
   async onEmailClick(email: EmailEntry): Promise<void> {
@@ -59,9 +47,5 @@ export class MailShellComponent {
 
   async onLoadMore(): Promise<void> {
     await this.mbox.loadMoreEmails();
-  }
-
-  onToggleSidebar(): void {
-    this.ui.toggleSidebar();
   }
 }

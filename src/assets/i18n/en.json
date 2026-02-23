@@ -84,5 +84,18 @@
     "LABEL": "Language",
     "EN": "English",
     "ES": "Español"
+  },
+  "PREFERENCES": {
+    "TITLE": "Preferences",
+    "LANGUAGE": "Language",
+    "CURRENT_FILE": "Current File",
+    "NO_FILE_OPEN": "No file is currently open",
+    "OPEN_FILE": "Open MBOX File",
+    "OPEN_DIFFERENT": "Open Different",
+    "CLOSE_FILE": "Close",
+    "EMAILS": "emails",
+    "WITH_ATTACHMENTS": "with attachments",
+    "ABOUT": "About",
+    "VERSION": "Version"
   }
 }

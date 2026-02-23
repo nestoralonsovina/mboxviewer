@@ -1,56 +1,38 @@
-<div class="flex h-screen bg-surface-100 dark:bg-surface-950 max-md:flex-col">
-  <!-- Sidebar -->
-  <app-sidebar
-    [stats]="mbox.stats()"
-    [labels]="mbox.labels()"
-    [selectedLabel]="mbox.selectedLabel()"
-    [searchQuery]="mbox.searchQuery()"
-    [currentPath]="mbox.currentPath()"
-    [collapsed]="ui.sidebarCollapsed()"
-    (openFile)="onOpenFile()"
-    (closeFile)="onCloseFile()"
-    (labelClick)="onLabelClick($event)"
-    (toggleCollapse)="onToggleSidebar()" />
+<div class="flex flex-col h-screen bg-white dark:bg-surface-900">
+  <!-- Toolbar -->
+  <app-search-toolbar
+    [isSearching]="mbox.isSearching()"
+    [searchResultsCount]="mbox.searchResultsCount()"
+    [emailCount]="mbox.emails().length"
+    (searchChange)="onSearchInput($event)"
+    (clearSearch)="onClearSearch()" />
 
-  <!-- Main Content -->
-  <main class="flex-1 flex flex-col min-w-0 bg-white dark:bg-surface-900 max-md:rounded-none"
-        [class.rounded-l-2xl]="!ui.sidebarCollapsed()"
-        [class.shadow-lg]="!ui.sidebarCollapsed()">
-    <!-- Toolbar -->
-    <app-search-toolbar
-      [isSearching]="mbox.isSearching()"
-      [searchResultsCount]="mbox.searchResultsCount()"
-      [emailCount]="mbox.emails().length"
-      (searchChange)="onSearchInput($event)"
-      (clearSearch)="onClearSearch()" />
+  <!-- Content Area -->
+  <div class="flex-1 flex overflow-hidden">
+    <!-- Email List -->
+    <app-email-list
+      [class]="mbox.selectedEmail()
+        ? 'w-2/5 min-w-[320px] max-md:hidden border-r border-surface-200 dark:border-surface-800'
+        : 'flex-1'"
+      [emails]="mbox.emails()"
+      [selectedEmail]="mbox.selectedEmail()"
+      [isLoading]="mbox.loadingFile() || mbox.loadingEmails()"
+      [isLoadingMore]="mbox.loadingMore()"
+      [hasMore]="mbox.hasMore()"
+      [searchQuery]="mbox.searchQuery()"
+      [selectedLabel]="mbox.selectedLabel()"
+      (emailClick)="onEmailClick($event)"
+      (loadMore)="onLoadMore()" />
 
-    <!-- Content Area -->
-    <div class="flex-1 flex overflow-hidden">
-      <!-- Email List -->
-      <app-email-list
-        [class]="mbox.selectedEmail()
-          ? 'w-2/5 min-w-[320px] max-md:hidden border-r border-surface-200 dark:border-surface-800'
-          : 'flex-1'"
-        [emails]="mbox.emails()"
-        [selectedEmail]="mbox.selectedEmail()"
-        [isLoading]="mbox.loadingFile() || mbox.loadingEmails()"
-        [isLoadingMore]="mbox.loadingMore()"
-        [hasMore]="mbox.hasMore()"
-        [searchQuery]="mbox.searchQuery()"
-        [selectedLabel]="mbox.selectedLabel()"
-        (emailClick)="onEmailClick($event)"
-        (loadMore)="onLoadMore()" />
-
-      <!-- Email Detail -->
-      @let email = mbox.selectedEmail();
-      @if (email) {
-        <app-email-detail
-          [email]="email"
-          [emailBody]="mbox.selectedEmailBody()"
-          [isLoading]="mbox.loadingEmailBody()"
-          (closeDetail)="onCloseEmail()"
-          (downloadAttachment)="onDownloadAttachment($event)" />
-      }
-    </div>
-  </main>
+    <!-- Email Detail -->
+    @let email = mbox.selectedEmail();
+    @if (email) {
+      <app-email-detail
+        [email]="email"
+        [emailBody]="mbox.selectedEmailBody()"
+        [isLoading]="mbox.loadingEmailBody()"
+        (closeDetail)="onCloseEmail()"
+        (downloadAttachment)="onDownloadAttachment($event)" />
+    }
+  </div>
 </div>

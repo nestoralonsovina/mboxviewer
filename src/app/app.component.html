@@ -6,7 +6,8 @@
     [isLoading]="mbox.loadingFile()"
     (openFile)="onOpenFile()"
     (openRecent)="onOpenRecentFile($event)"
-    (removeRecent)="onRemoveRecentFile($event)" />
+    (removeRecent)="onRemoveRecentFile($event)"
+    (openPreferences)="onOpenPreferences()" />
 }
 
 <app-error-toast [message]="mbox.error()" (dismissed)="onDismissError()" />

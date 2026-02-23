@@ -5,9 +5,11 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from "@angular/core";
+import { provideRouter } from "@angular/router";
 import { provideHttpClient } from "@angular/common/http";
 import { provideTranslateService, TranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
+import { routes } from "./app.routes";
 import { MboxStateService } from "./state/mbox-state.service";
 
 function getPreferredLanguage(): string {
@@ -23,6 +25,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
     provideHttpClient(),
     provideTranslateService({
       defaultLanguage: "en",

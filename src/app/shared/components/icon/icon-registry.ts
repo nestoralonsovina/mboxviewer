@@ -133,6 +133,12 @@ const ICON_DEFINITIONS: Readonly<Record<string, IconDefinition>> = {
       '<line x1="17" y1="16" x2="23" y2="16"/>',
     ],
   },
+  'check': {
+    viewBox: '0 0 24 24',
+    paths: [
+      '<polyline points="20 6 9 17 4 12"/>',
+    ],
+  },
 };
 
 type IconName = keyof typeof ICON_DEFINITIONS;
