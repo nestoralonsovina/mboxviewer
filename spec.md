@@ -153,7 +153,7 @@ src-tauri/src/
 ## Phase 4: Extract Menu
 
 ### 4.1 Create menu.rs with setup function
-- [ ] done
+- [x] done
 - Create `src-tauri/src/menu.rs`
 - Move menu creation logic to `pub fn create_menu(app: &tauri::App) -> Result<Menu<tauri::Wry>, tauri::Error>`
 - Move `on_menu_event` handler logic to `pub fn handle_menu_event(app: &tauri::AppHandle, event: &tauri::menu::MenuEvent)`
