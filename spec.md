@@ -160,7 +160,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 4.2 Simplify lib.rs run() function
-- [ ] done
+- [x] done
 - `lib.rs` should only:
   - Declare modules: `mod commands; mod error; mod menu; mod models; mod services; mod state;`
   - Use statements for re-exports
