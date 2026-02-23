@@ -132,7 +132,7 @@ src-tauri/src/
 ## Phase 3: Extract Commands
 
 ### 3.1 Create commands/mbox.rs with thin wrappers
-- [ ] done
+- [x] done
 - Create `src-tauri/src/commands/` directory
 - Create `commands/mod.rs` with re-exports
 - Create `commands/mbox.rs`
