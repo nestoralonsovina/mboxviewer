@@ -1,5 +1,7 @@
 //! Tauri backend for mboxviewer - wraps mboxshell library for MBOX file operations.
 
+mod error;
+
 use std::path::PathBuf;
 use std::sync::Mutex;
 
