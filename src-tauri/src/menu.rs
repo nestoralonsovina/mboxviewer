@@ -85,7 +85,7 @@ pub fn handle_menu_event(app: &tauri::AppHandle, event: &tauri::menu::MenuEvent)
         println!("Settings menu item clicked, emitting open-preferences event");
         match app.emit("open-preferences", ()) {
             Ok(_) => println!("Event emitted successfully"),
-            Err(e) => eprintln!("Failed to emit event: {:?}", e),
+            Err(e) => eprintln!("Failed to emit event: {e:?}"),
         }
     }
 }

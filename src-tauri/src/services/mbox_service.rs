@@ -38,8 +38,8 @@ impl MboxService {
             return Err(AppError::NotFound(path.display().to_string()));
         }
 
-        let mut entries = build_index(&path.to_path_buf(), false, None)
-            .map_err(|e| AppError::MboxShell(e.to_string()))?;
+        let mut entries =
+            build_index(path, false, None).map_err(|e| AppError::MboxShell(e.to_string()))?;
 
         // Sort by date, most recent first
         entries.sort_by(|a, b| b.date.cmp(&a.date));
@@ -49,8 +49,7 @@ impl MboxService {
             entry.sequence = i as u64;
         }
 
-        let store =
-            MboxStore::open(&path.to_path_buf()).map_err(|e| AppError::MboxShell(e.to_string()))?;
+        let store = MboxStore::open(path).map_err(|e| AppError::MboxShell(e.to_string()))?;
 
         let total_messages = entries.len();
         let total_with_attachments = entries.iter().filter(|e| e.has_attachments).count();

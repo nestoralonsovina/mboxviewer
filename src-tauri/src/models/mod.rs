@@ -3,5 +3,5 @@
 pub mod email;
 pub mod stats;
 
-pub use email::{AttachmentInfo, EmailAddress, EmailBody, EmailEntry};
-pub use stats::{IndexProgress, LabelCount, MboxStats, SearchResults};
+pub use email::{EmailBody, EmailEntry};
+pub use stats::{LabelCount, MboxStats, SearchResults};
