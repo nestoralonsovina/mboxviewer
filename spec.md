@@ -85,7 +85,7 @@ src-tauri/src/
 ## Phase 2: Extract Services
 
 ### 2.1 Create services/mbox_service.rs with MboxService struct
-- [ ] done
+- [x] done
 - Create `src-tauri/src/services/` directory
 - Create `services/mod.rs`
 - Create `services/mbox_service.rs`

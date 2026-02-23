@@ -2,6 +2,7 @@
 
 mod error;
 mod models;
+mod services;
 mod state;
 
 use std::path::PathBuf;
