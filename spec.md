@@ -73,7 +73,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 1.3 Create state.rs with AppState
-- [ ] done
+- [x] done
 - Create `src-tauri/src/state.rs`
 - Move `AppState` struct and `Default` impl
 - Keep `use std::sync::Mutex` and necessary mboxshell imports

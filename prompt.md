@@ -1,132 +1,166 @@
-# MBOX Viewer — Tailwind Migration Prompt
+# MBOX Viewer — Rust Backend Modularization Prompt
 
-You are migrating an Angular 20 + Tauri 2 MBOX viewer app from custom CSS to Tailwind CSS.
+You are modularizing the Tauri 2 Rust backend of an MBOX viewer app. The goal is to transform a monolithic `lib.rs` (516 lines) into a clean, testable module structure.
 
 ## How to use this prompt
 
 1. Read `spec.md` in the project root. It defines every task with checkboxes (`[ ]` = pending, `[x]` = done).
 2. Find the **first task not marked as done**. That is your task.
 3. Execute that task following the rules below.
-4. When finished, mark it `[x]` in `spec.md`, commit and push your changes.
+4. When finished, mark it `[x]` in `spec.md`, commit your changes.
 5. Stop. Do not proceed to the next task unless explicitly asked.
 
 ## Rules
 
-### Tailwind conventions
+### Architecture principles
 
-- **Tailwind 4** — CSS-first config with `@theme` directive, no `tailwind.config.js`.
-- **Utility-first** — prefer Tailwind classes over custom CSS.
-- **Dark mode** — use `dark:` variant classes (auto-detects `prefers-color-scheme`).
-- **Responsive** — use `max-md:`, `max-lg:` for mobile-down breakpoints.
-- **No arbitrary values** — use Tailwind's scale where possible. Use `[value]` syntax only when necessary.
-- **See** `docs/tailwind-v4-reference.md` for complete API reference.
+- **Services have zero Tauri dependencies** — The `services/` module never imports `tauri`. Business logic is pure Rust, testable without a Tauri runtime.
+- **Commands are thin wrappers** — Extract input, validate, delegate to service, return `Result<T, AppError>`. No business logic in `#[tauri::command]` functions.
+- **Proper error types** — Use `thiserror` for domain errors. No more `Result<T, String>`.
+- **Single responsibility** — Each module has one clear purpose.
 
-### Migration pattern
+### File organization
 
-When migrating a component's CSS to Tailwind:
+Target structure:
 
-1. **Read the existing CSS file** — understand all styles being used.
-2. **Map CSS properties to Tailwind utilities**:
-   - `display: flex` → `flex`
-   - `align-items: center` → `items-center`
-   - `padding: 0.75rem 1rem` → `px-4 py-3`
-   - `color: var(--text-primary)` → `text-slate-900 dark:text-slate-50`
-   - `background: var(--bg-secondary)` → `bg-slate-50 dark:bg-slate-800`
-   - `border-radius: var(--radius-md)` → `rounded-lg`
-   - `transition: all var(--transition)` → `transition-all duration-150`
-3. **Apply classes directly in HTML** — add to element's `class` attribute.
-4. **Handle :host styles** — use component's `host` property:
-   ```typescript
-   @Component({
-     host: { class: 'block h-screen overflow-hidden' },
-     ...
-   })
-   ```
-5. **Delete the CSS file** when fully migrated.
-6. **Remove styleUrl** from component decorator.
-7. **Verify**: `bun run build` must succeed.
+```
+src-tauri/src/
+├── main.rs              # Entry: calls lib::run()
+├── lib.rs               # Tauri Builder setup only
+├── error.rs             # AppError enum
+├── state.rs             # AppState struct
+├── menu.rs              # Menu setup
+├── models/
+│   ├── mod.rs           # Re-exports
+│   ├── email.rs         # EmailEntry, EmailAddress, EmailBody, AttachmentInfo
+│   └── stats.rs         # MboxStats, LabelCount, IndexProgress, SearchResults
+├── services/
+│   ├── mod.rs           # Re-exports
+│   └── mbox_service.rs  # Business logic (no Tauri)
+└── commands/
+    ├── mod.rs           # Re-exports
+    └── mbox.rs          # Thin command wrappers
+```
 
-### Design token mapping
+### Rust conventions
 
-Current CSS variables → Tailwind classes:
+- Use `thiserror` for error enums with `#[derive(Error)]`
+- Implement `Serialize` for errors (Tauri IPC requires it)
+- Use `#[serde(rename_all = "camelCase")]` for types crossing IPC boundary
+- Accept `&str` over `String`, `&Path` over `PathBuf` in function parameters
+- Return owned types from functions that produce data
+- Use `?` operator for error propagation, never `.unwrap()` in production paths
 
-| CSS Variable | Light Mode | Dark Mode |
-|--------------|------------|-----------|
-| `--bg-primary` | `bg-white` | `dark:bg-slate-900` |
-| `--bg-secondary` | `bg-slate-50` | `dark:bg-slate-800` |
-| `--bg-tertiary` | `bg-slate-100` | `dark:bg-slate-700` |
-| `--text-primary` | `text-slate-900` | `dark:text-slate-50` |
-| `--text-secondary` | `text-slate-600` | `dark:text-slate-400` |
-| `--text-muted` | `text-slate-400` | `dark:text-slate-500` |
-| `--border-color` | `border-slate-200` | `dark:border-slate-700` |
-| `--accent-color` | `text-indigo-500` / `bg-indigo-500` | same |
-| `--accent-hover` | `hover:bg-indigo-600` | same |
-| `--danger-color` | `text-rose-500` | same |
-| `--radius-sm` | `rounded` | — |
-| `--radius-md` | `rounded-lg` | — |
-| `--radius-lg` | `rounded-xl` | — |
-| `--transition` | `transition-all duration-150` | — |
+### Error type pattern
 
-### Spacing scale
+```rust
+use thiserror::Error;
+use serde::Serialize;
 
-| CSS Value | Tailwind |
-|-----------|----------|
-| `0.25rem` | `1` |
-| `0.375rem` | `1.5` |
-| `0.5rem` | `2` |
-| `0.625rem` | `2.5` |
-| `0.75rem` | `3` |
-| `0.875rem` | `3.5` |
-| `1rem` | `4` |
-| `1.25rem` | `5` |
-| `1.5rem` | `6` |
-| `2rem` | `8` |
-| `2.5rem` | `10` |
-| `3rem` | `12` |
+#[derive(Debug, Error)]
+pub enum AppError {
+    #[error("Not found: {0}")]
+    NotFound(String),
+    
+    #[error("Validation error: {0}")]
+    Validation(String),
+    
+    #[error("IO error: {0}")]
+    Io(#[from] std::io::Error),
+    
+    #[error("MBOX error: {0}")]
+    MboxShell(String),
+}
 
-### Typography scale
+impl Serialize for AppError {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        s.serialize_str(&self.to_string())
+    }
+}
+```
 
-| CSS Value | Tailwind |
-|-----------|----------|
-| `0.6875rem` (11px) | `text-[11px]` |
-| `0.75rem` (12px) | `text-xs` |
-| `0.8125rem` (13px) | `text-[13px]` |
-| `0.875rem` (14px) | `text-sm` |
-| `1rem` (16px) | `text-base` |
-| `1.25rem` (20px) | `text-xl` |
-| `2rem` (32px) | `text-3xl` |
+### Service pattern
 
-### Responsive breakpoints
+```rust
+// services/mbox_service.rs — NO tauri imports!
+use std::path::Path;
+use crate::error::AppError;
+use crate::models::{EmailEntry, MboxStats};
 
-| CSS Media Query | Tailwind |
-|-----------------|----------|
-| `@media (max-width: 900px)` | `max-lg:` (≤1024px) or custom |
-| `@media (max-width: 700px)` | `max-md:` (≤768px) |
+pub struct MboxService {
+    // internal state
+}
+
+impl MboxService {
+    pub fn new() -> Self { /* ... */ }
+    
+    pub fn open(&mut self, path: &Path) -> Result<MboxStats, AppError> {
+        // Business logic here
+    }
+}
+```
+
+### Command pattern
+
+```rust
+// commands/mbox.rs
+use tauri::State;
+use crate::error::AppError;
+use crate::state::AppState;
+use crate::models::MboxStats;
+
+#[tauri::command]
+pub async fn open_mbox(
+    path: String,
+    state: State<'_, AppState>,
+) -> Result<MboxStats, AppError> {
+    let path = std::path::PathBuf::from(&path);
+    let mut service = state.service.lock().unwrap();
+    service.open(&path)
+}
+```
 
 ### What NOT to do
 
-- Do not create a `tailwind.config.js` — use CSS-first config.
-- Do not add custom CSS unless Tailwind cannot express it.
-- Do not change component logic or TypeScript code (unless updating `host`).
-- Do not modify Rust/Tauri backend code.
-- Do not refactor beyond the scope of the current task.
-- Do not use `@apply` — inline utilities directly.
+- Do not add Tauri imports to services — this is the critical constraint
+- Do not change behavior — only reorganize code
+- Do not refactor beyond the scope of the current task
+- Do not use `.unwrap()` without good reason (prefer `?` or `.expect("reason")`)
+- Do not create unnecessary abstractions — keep it simple
 
 ## Verification
 
 After every task:
 
-1. `bun run build` must succeed with zero errors.
-2. `bun run lint` must pass.
-3. Manual smoke test: open an `.mbox` file, browse emails, search, filter by label, view email body, download an attachment. Everything must work as before.
-4. Visual test: appearance should match or improve upon the original design.
+1. `cargo check` must succeed with zero errors
+2. For the final task: `cargo build --release` and manual test with `bun run tauri dev`
+3. Verify: open file, browse emails, search, view email, download attachment
 
 ## Context files
 
 Read these before starting:
 
-- `spec.md` — the full task list and migration spec
-- `docs/tailwind-v4-reference.md` — Tailwind v4 API reference (theme, directives, patterns)
-- `AGENTS.md` — project structure, Tauri commands
-- `src/styles.css` — current global styles with CSS variables
-- Any component's `.css` file before migrating it
+- `spec.md` — the full task list
+- `AGENTS.md` — project overview, Tauri commands reference
+- `src-tauri/src/lib.rs` — current monolithic implementation
+- `src-tauri/Cargo.toml` — dependencies
+
+## Key dependencies
+
+| Crate | Purpose |
+|-------|---------|
+| `tauri` | Framework (commands, state) |
+| `mboxshell` | MBOX parsing library |
+| `serde` | Serialization for IPC |
+| `tokio` | Async runtime |
+| `thiserror` | Error derive macro (add this) |
+
+## mboxshell types reference
+
+The backend uses these types from mboxshell:
+
+- `mboxshell::model::mail::MailEntry` — Email metadata
+- `mboxshell::model::mail::MailBody` — Email content with attachments
+- `mboxshell::store::reader::MboxStore` — Reader for message bodies
+- `mboxshell::index::builder::build_index` — Index builder
+- `mboxshell::search::execute` — Search function

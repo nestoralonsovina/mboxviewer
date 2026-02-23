@@ -2,39 +2,19 @@
 
 mod error;
 mod models;
+mod state;
 
 use std::path::PathBuf;
-use std::sync::Mutex;
 
 use mboxshell::index::builder::build_index;
-use mboxshell::model::mail::MailEntry;
 use mboxshell::search;
 use mboxshell::store::reader::MboxStore;
 use models::*;
+use state::AppState;
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem, Submenu},
     State, Emitter,
 };
-
-/// Application state holding the currently open MBOX file
-pub struct AppState {
-    /// Path to the currently open MBOX file
-    mbox_path: Mutex<Option<PathBuf>>,
-    /// Indexed mail entries
-    entries: Mutex<Vec<MailEntry>>,
-    /// MBOX store for reading message bodies
-    store: Mutex<Option<MboxStore>>,
-}
-
-impl Default for AppState {
-    fn default() -> Self {
-        Self {
-            mbox_path: Mutex::new(None),
-            entries: Mutex::new(Vec::new()),
-            store: Mutex::new(None),
-        }
-    }
-}
 
 /// Open an MBOX file and build/load its index
 #[tauri::command]

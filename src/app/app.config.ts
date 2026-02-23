@@ -21,6 +21,10 @@ function getPreferredLanguage(): string {
   return ["en", "es"].includes(browserLang) ? browserLang : "en";
 }
 
+function isPreferencesWindow(): boolean {
+  return window.location.pathname === "/preferences";
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -38,6 +42,12 @@ export const appConfig: ApplicationConfig = {
       const translate = inject(TranslateService);
       translate.use(getPreferredLanguage());
     }),
-    provideAppInitializer(() => inject(MboxStateService).initialize()),
+    provideAppInitializer(() => {
+      // Skip heavy initialization for preferences window
+      if (isPreferencesWindow()) {
+        return;
+      }
+      return inject(MboxStateService).initialize();
+    }),
   ],
 };
