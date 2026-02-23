@@ -196,7 +196,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 5.4 Final verification
-- [ ] done
+- [x] done
 - Run `cargo build --release`
 - Run `bun run tauri dev` and test: open file, view emails, search, download attachment
 - Verify all functionality works as before
