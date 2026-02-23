@@ -1,3 +1,5 @@
+//! Native menu setup for the application window.
+
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem, Submenu},
     Emitter,
