@@ -190,7 +190,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 5.3 Verify services have no Tauri dependencies
-- [ ] done
+- [x] done
 - Run `grep -r "use tauri" src-tauri/src/services/`
 - Must return no matches
 - Run `cargo check` to verify
