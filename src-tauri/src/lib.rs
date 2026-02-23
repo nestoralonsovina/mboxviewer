@@ -39,11 +39,13 @@ fn get_emails(
     offset: usize,
     limit: usize,
     state: State<'_, AppState>,
-) -> Result<Vec<EmailEntry>, String> {
+) -> Result<Vec<EmailEntry>, AppError> {
     let entries = state.entries.lock().unwrap();
 
     if entries.is_empty() {
-        return Err("No MBOX file is currently open".to_string());
+        return Err(AppError::Validation(
+            "No MBOX file is currently open".to_string(),
+        ));
     }
 
     let end = (offset + limit).min(entries.len());
@@ -54,30 +56,36 @@ fn get_emails(
 
 /// Get the total count of emails
 #[tauri::command]
-fn get_email_count(state: State<'_, AppState>) -> Result<usize, String> {
+fn get_email_count(state: State<'_, AppState>) -> usize {
     let entries = state.entries.lock().unwrap();
-    Ok(entries.len())
+    entries.len()
 }
 
 /// Get a single email's full body
 #[tauri::command]
-fn get_email_body(index: usize, state: State<'_, AppState>) -> Result<EmailBody, String> {
+fn get_email_body(index: usize, state: State<'_, AppState>) -> Result<EmailBody, AppError> {
     let entries = state.entries.lock().unwrap();
     let mut store_guard = state.store.lock().unwrap();
 
     if entries.is_empty() {
-        return Err("No MBOX file is currently open".to_string());
+        return Err(AppError::Validation(
+            "No MBOX file is currently open".to_string(),
+        ));
     }
 
     if index >= entries.len() {
-        return Err(format!("Invalid email index: {}", index));
+        return Err(AppError::Validation(format!(
+            "Invalid email index: {index}"
+        )));
     }
 
     let store = store_guard
         .as_mut()
-        .ok_or("MBOX store not initialized")?;
+        .ok_or_else(|| AppError::Validation("MBOX store not initialized".to_string()))?;
     let entry = &entries[index];
-    let body = store.get_message(entry).map_err(|e| e.to_string())?;
+    let body = store
+        .get_message(entry)
+        .map_err(|e| AppError::MboxShell(e.to_string()))?;
 
     Ok(EmailBody::from(body))
 }

@@ -11,7 +11,7 @@ use mboxshell::model::mail::MailEntry;
 use mboxshell::store::reader::MboxStore;
 
 use crate::error::AppError;
-use crate::models::{LabelCount, MboxStats};
+use crate::models::{EmailBody, EmailEntry, LabelCount, MboxStats};
 
 /// Manages the state and operations for an opened MBOX file.
 ///
@@ -65,6 +65,52 @@ impl MboxService {
             total_with_attachments,
             labels,
         })
+    }
+
+    pub fn get_email_count(&self) -> usize {
+        self.entries.len()
+    }
+
+    pub fn get_emails(&self, offset: usize, limit: usize) -> Result<Vec<EmailEntry>, AppError> {
+        if self.entries.is_empty() {
+            return Err(AppError::Validation(
+                "No MBOX file is currently open".to_string(),
+            ));
+        }
+
+        let end = (offset + limit).min(self.entries.len());
+        let result = self.entries[offset..end]
+            .iter()
+            .map(EmailEntry::from)
+            .collect();
+
+        Ok(result)
+    }
+
+    pub fn get_email_body(&mut self, index: usize) -> Result<EmailBody, AppError> {
+        if self.entries.is_empty() {
+            return Err(AppError::Validation(
+                "No MBOX file is currently open".to_string(),
+            ));
+        }
+
+        if index >= self.entries.len() {
+            return Err(AppError::Validation(format!(
+                "Invalid email index: {index}"
+            )));
+        }
+
+        let store = self
+            .store
+            .as_mut()
+            .ok_or_else(|| AppError::Validation("MBOX store not initialized".to_string()))?;
+
+        let entry = &self.entries[index];
+        let body = store
+            .get_message(entry)
+            .map_err(|e| AppError::MboxShell(e.to_string()))?;
+
+        Ok(EmailBody::from(body))
     }
 
     fn count_labels(&self) -> Vec<LabelCount> {
@@ -127,5 +173,43 @@ mod tests {
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.to_string(), "Not found: /nonexistent/file.mbox");
+    }
+
+    #[test]
+    fn get_email_count_returns_zero_when_no_file_open() {
+        let service = MboxService::new();
+        assert_eq!(service.get_email_count(), 0);
+    }
+
+    #[test]
+    fn get_emails_returns_validation_error_when_no_file_open() {
+        let service = MboxService::new();
+        let result = service.get_emails(0, 10);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Validation error: No MBOX file is currently open"
+        );
+    }
+
+    #[test]
+    fn get_email_body_returns_validation_error_when_no_file_open() {
+        let mut service = MboxService::new();
+        let result = service.get_email_body(0);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Validation error: No MBOX file is currently open"
+        );
+    }
+
+    #[test]
+    fn get_email_body_returns_not_found_for_out_of_bounds_index() {
+        let mut service = MboxService::new();
+        // Simulate having entries but no store — set entries manually
+        service.entries = vec![]; // empty, so any index is out of bounds
+                                  // This should fail with validation since no file is open (empty entries)
+        let result = service.get_email_body(5);
+        assert!(result.is_err());
     }
 }

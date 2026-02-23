@@ -103,7 +103,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 2.3 Move email retrieval logic to MboxService
-- [ ] done
+- [x] done
 - Add `pub fn get_emails(&self, offset: usize, limit: usize) -> Result<Vec<EmailEntry>, AppError>`
 - Add `pub fn get_email_count(&self) -> usize`
 - Add `pub fn get_email_body(&mut self, index: usize) -> Result<EmailBody, AppError>`
