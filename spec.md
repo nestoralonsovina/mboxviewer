@@ -95,7 +95,7 @@ src-tauri/src/
 - Run `cargo check` to verify
 
 ### 2.2 Move open_mbox logic to MboxService::open
-- [ ] done
+- [x] done
 - Add `pub fn open(&mut self, path: &Path) -> Result<MboxStats, AppError>` to `MboxService`
 - Move index building, sorting, store opening, stats calculation logic
 - Extract label counting to a private helper method `count_labels(&self) -> Vec<LabelCount>`

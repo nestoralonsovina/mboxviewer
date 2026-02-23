@@ -7,10 +7,10 @@ mod state;
 
 use std::path::PathBuf;
 
-use mboxshell::index::builder::build_index;
+use error::AppError;
 use mboxshell::search;
-use mboxshell::store::reader::MboxStore;
 use models::*;
+use services::MboxService;
 use state::AppState;
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem, Submenu},
@@ -19,55 +19,18 @@ use tauri::{
 
 /// Open an MBOX file and build/load its index
 #[tauri::command]
-async fn open_mbox(path: String, state: State<'_, AppState>) -> Result<MboxStats, String> {
+async fn open_mbox(path: String, state: State<'_, AppState>) -> Result<MboxStats, AppError> {
     let path_buf = PathBuf::from(&path);
 
-    if !path_buf.exists() {
-        return Err(format!("File not found: {}", path));
-    }
+    let mut service = MboxService::new();
+    let stats = service.open(&path_buf)?;
 
-    // Build or load the index
-    let mut entries = build_index(&path_buf, false, None).map_err(|e| e.to_string())?;
+    // Transfer ownership from service to AppState
+    *state.mbox_path.lock().unwrap() = service.mbox_path.take();
+    *state.entries.lock().unwrap() = std::mem::take(&mut service.entries);
+    *state.store.lock().unwrap() = service.store.take();
 
-    // Sort by date, most recent first
-    entries.sort_by(|a, b| b.date.cmp(&a.date));
-
-    // Reassign sequence numbers after sorting to maintain correct indexing
-    for (i, entry) in entries.iter_mut().enumerate() {
-        entry.sequence = i as u64;
-    }
-
-    // Open the store for reading message bodies
-    let store = MboxStore::open(&path_buf).map_err(|e| e.to_string())?;
-
-    // Calculate statistics
-    let total_messages = entries.len();
-    let total_with_attachments = entries.iter().filter(|e| e.has_attachments).count();
-
-    // Count labels
-    let mut label_counts: std::collections::HashMap<String, usize> =
-        std::collections::HashMap::new();
-    for entry in &entries {
-        for label in &entry.labels {
-            *label_counts.entry(label.clone()).or_insert(0) += 1;
-        }
-    }
-    let mut labels: Vec<LabelCount> = label_counts
-        .into_iter()
-        .map(|(label, count)| LabelCount { label, count })
-        .collect();
-    labels.sort_by(|a, b| b.count.cmp(&a.count));
-
-    // Update state
-    *state.mbox_path.lock().unwrap() = Some(path_buf);
-    *state.entries.lock().unwrap() = entries;
-    *state.store.lock().unwrap() = Some(store);
-
-    Ok(MboxStats {
-        total_messages,
-        total_with_attachments,
-        labels,
-    })
+    Ok(stats)
 }
 
 /// Get a paginated list of emails
