@@ -6,6 +6,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MboxApiService } from '../core/tauri/mbox-api.service';
 import { SettingsStoreService } from '../core/store/settings-store.service';
 import { errorMessage } from '../core/utils/error';
+import { mimeToExtension } from '../core/utils/format';
 import type {
   AttachmentInfo,
   EmailBody,
@@ -270,9 +271,17 @@ export class MboxStateService {
     attachment: AttachmentInfo,
   ): Promise<void> {
     try {
+      const ext = mimeToExtension(attachment.content_type);
+      const filters = ext
+        ? [
+            { name: ext.toUpperCase(), extensions: [ext] },
+            { name: 'All Files', extensions: ['*'] },
+          ]
+        : [{ name: 'All Files', extensions: ['*'] }];
+
       const savePath = await save({
         defaultPath: attachment.filename,
-        filters: [{ name: 'All Files', extensions: ['*'] }],
+        filters,
       });
 
       if (savePath) {

@@ -5,8 +5,7 @@ use std::sync::Mutex;
 
 use mboxshell::index::builder::build_index;
 use mboxshell::model::mail::{MailBody, MailEntry};
-use mboxshell::search::metadata::search_metadata;
-use mboxshell::search::query::parse_query;
+use mboxshell::search;
 use mboxshell::store::reader::MboxStore;
 use serde::{Deserialize, Serialize};
 use tauri::State;
@@ -255,25 +254,36 @@ pub struct SearchResults {
 }
 
 /// Search emails using mboxshell query syntax
+/// Supports both metadata search (fast) and body/fulltext search (slower)
 #[tauri::command]
 async fn search_emails(
     query: String,
     limit: Option<usize>,
     state: State<'_, AppState>,
 ) -> Result<SearchResults, String> {
-    // Clone entries to release the lock quickly
-    let entries = {
-        let guard = state.entries.lock().unwrap();
-        if guard.is_empty() {
+    // Clone entries and path to release the lock quickly
+    let (entries, mbox_path) = {
+        let entries_guard = state.entries.lock().unwrap();
+        let path_guard = state.mbox_path.lock().unwrap();
+        
+        if entries_guard.is_empty() {
             return Err("No MBOX file is currently open".to_string());
         }
-        guard.clone()
+        
+        let path = path_guard.clone().ok_or("No MBOX file path available")?;
+        (entries_guard.clone(), path)
     };
 
     // Run search in a blocking task to not block the main thread
     let result = tokio::task::spawn_blocking(move || {
-        let parsed_query = parse_query(&query);
-        let matching_indices = search_metadata(&entries, &parsed_query);
+        // Use the high-level execute function which handles both metadata and fulltext search
+        let (_parsed_query, matching_indices) = search::execute(
+            &mbox_path,
+            &entries,
+            &query,
+            None, // No progress callback for now
+        ).map_err(|e| e.to_string())?;
+        
         let total_count = matching_indices.len();
         
         // Limit results to avoid serialization overhead
@@ -284,13 +294,13 @@ async fn search_emails(
             .map(|i| EmailEntry::from(&entries[i]))
             .collect();
 
-        SearchResults {
+        Ok::<SearchResults, String>(SearchResults {
             emails: results,
             total_count,
-        }
+        })
     })
     .await
-    .map_err(|e| format!("Search task failed: {}", e))?;
+    .map_err(|e| format!("Search task failed: {}", e))??;
 
     Ok(result)
 }
