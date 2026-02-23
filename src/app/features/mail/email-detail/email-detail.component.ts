@@ -1,5 +1,6 @@
 import { Component, input, output, inject, computed } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import { formatDate } from '../../../core/utils/format';
@@ -8,7 +9,7 @@ import type { AttachmentInfo, EmailBody, EmailEntry } from '../../../core/models
 @Component({
   selector: 'app-email-detail',
   standalone: true,
-  imports: [IconComponent, SpinnerComponent],
+  imports: [IconComponent, SpinnerComponent, TranslatePipe],
   templateUrl: './email-detail.component.html',
   styles: `
     :host {

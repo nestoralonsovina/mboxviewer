@@ -1,18 +1,19 @@
 import { Component, input, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import type { EmailBody } from '../../../core/models/mbox.models';
 
 @Component({
   selector: 'app-email-body',
   standalone: true,
-  imports: [SpinnerComponent],
+  imports: [SpinnerComponent, TranslatePipe],
   host: { class: 'block' },
   template: `
     @let body = this.body();
     @if (isLoading() && !body) {
       <div class="flex flex-col items-center justify-center gap-3 p-12 text-surface-400 dark:text-surface-500">
         <app-spinner />
-        <span class="text-sm">Loading...</span>
+        <span class="text-sm">{{ 'EMAIL_DETAIL.LOADING' | translate }}</span>
       </div>
     } @else if (body) {
       @if (body.html) {
@@ -21,19 +22,19 @@ import type { EmailBody } from '../../../core/models/mbox.models';
           class="w-full border-none bg-white block"
           [srcdoc]="getStyledHtml(body.html)"
           sandbox="allow-same-origin"
-          title="Email content"
+          [title]="'EMAIL_DETAIL.IFRAME_TITLE' | translate"
           (load)="onIframeLoad()">
         </iframe>
       } @else if (body.text) {
         <pre class="m-0 px-6 py-5 font-sans text-sm leading-relaxed whitespace-pre-wrap break-words text-surface-700 dark:text-surface-300">{{ body.text }}</pre>
       } @else {
         <div class="p-8 text-center text-surface-400 dark:text-surface-500 text-sm">
-          No content available
+          {{ 'EMAIL_DETAIL.NO_CONTENT' | translate }}
         </div>
       }
     } @else {
       <div class="p-8 text-center text-surface-400 dark:text-surface-500 text-sm">
-        No content available
+        {{ 'EMAIL_DETAIL.NO_CONTENT' | translate }}
       </div>
     }
   `,

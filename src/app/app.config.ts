@@ -5,12 +5,36 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from "@angular/core";
+import { provideHttpClient } from "@angular/common/http";
+import { provideTranslateService, TranslateService } from "@ngx-translate/core";
+import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import { MboxStateService } from "./state/mbox-state.service";
+
+function getPreferredLanguage(): string {
+  const saved = localStorage.getItem("preferredLanguage");
+  if (saved && ["en", "es"].includes(saved)) {
+    return saved;
+  }
+  const browserLang = navigator.language.split("-")[0];
+  return ["en", "es"].includes(browserLang) ? browserLang : "en";
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideHttpClient(),
+    provideTranslateService({
+      defaultLanguage: "en",
+    }),
+    provideTranslateHttpLoader({
+      prefix: "./assets/i18n/",
+      suffix: ".json",
+    }),
+    provideAppInitializer(() => {
+      const translate = inject(TranslateService);
+      translate.use(getPreferredLanguage());
+    }),
     provideAppInitializer(() => inject(MboxStateService).initialize()),
   ],
 };

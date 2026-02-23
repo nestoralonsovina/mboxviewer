@@ -1,4 +1,5 @@
 import { Component, ElementRef, input, output, inject, AfterViewInit, OnDestroy } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { EmailItemComponent } from './email-item.component';
@@ -7,7 +8,7 @@ import type { EmailEntry } from '../../../core/models/mbox.models';
 @Component({
   selector: 'app-email-list',
   standalone: true,
-  imports: [SpinnerComponent, IconComponent, EmailItemComponent],
+  imports: [SpinnerComponent, IconComponent, EmailItemComponent, TranslatePipe],
   templateUrl: './email-list.component.html',
   host: { class: 'block overflow-y-auto bg-white dark:bg-surface-900' },
 })

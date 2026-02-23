@@ -1,13 +1,15 @@
 import { Component, input, output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
+import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
 import { RecentFilesListComponent } from './recent-files-list.component';
 import type { RecentFile } from '../../core/models/mbox.models';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [IconComponent, SpinnerComponent, RecentFilesListComponent],
+  imports: [IconComponent, SpinnerComponent, RecentFilesListComponent, LanguageSwitcherComponent, TranslatePipe],
   templateUrl: './welcome.component.html',
 })
 export class WelcomeComponent {

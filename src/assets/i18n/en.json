@@ -1,0 +1,88 @@
+{
+  "APP": {
+    "TITLE": "MBOX Viewer"
+  },
+  "WELCOME": {
+    "TAGLINE": "Open and explore your Gmail Takeout exports with ease",
+    "OPENING_FILE": "Opening file...",
+    "OPEN_BUTTON": "Open MBOX File"
+  },
+  "RECENT_FILES": {
+    "TITLE": "Recent Files",
+    "REMOVE": "Remove from list"
+  },
+  "SIDEBAR": {
+    "EXPAND": "Expand sidebar",
+    "COLLAPSE": "Collapse sidebar",
+    "OPEN_ANOTHER": "Open another file",
+    "CLOSE_FILE": "Close file",
+    "ALL_MAIL": "All Mail",
+    "LABELS": "Labels",
+    "EMAILS": "emails",
+    "ATTACHMENTS": "attachments"
+  },
+  "SEARCH": {
+    "PLACEHOLDER": "Search emails...",
+    "FILTERS": "Filters",
+    "OF": "of",
+    "RESULTS": "results",
+    "RESULTS_FOR": "results for",
+    "FROM": "From",
+    "FROM_PLACEHOLDER": "sender@example.com",
+    "TO": "To",
+    "TO_PLACEHOLDER": "recipient@example.com",
+    "SUBJECT": "Subject",
+    "SUBJECT_PLACEHOLDER": "Meeting notes",
+    "CONTENT": "Content",
+    "CONTENT_HINT": "(add a filter first)",
+    "CONTENT_PLACEHOLDER": "Search in email body...",
+    "HAS_ATTACHMENT": "Has attachment"
+  },
+  "EMAIL_LIST": {
+    "LOADING": "Loading emails...",
+    "LOADING_MORE": "Loading more...",
+    "NO_EMAILS": "No emails found",
+    "NO_SUBJECT": "(No subject)"
+  },
+  "EMAIL_DETAIL": {
+    "BACK": "Back",
+    "NO_SUBJECT": "(No subject)",
+    "TO": "To:",
+    "MORE": "more",
+    "LOADING": "Loading...",
+    "NO_CONTENT": "No content available",
+    "SELECT_EMAIL": "Select an email to view",
+    "IFRAME_TITLE": "Email content",
+    "ATTACHMENT": "Attachment",
+    "ATTACHMENTS": "Attachments"
+  },
+  "SHARED": {
+    "DISMISS": "Dismiss",
+    "LOADING": "Loading"
+  },
+  "ERRORS": {
+    "OPEN_DIALOG": "Failed to open file dialog",
+    "OPEN_MBOX": "Failed to open MBOX",
+    "LOAD_EMAILS": "Failed to load emails",
+    "LOAD_MORE": "Failed to load more emails",
+    "SEARCH": "Search failed",
+    "FILTER_LABEL": "Failed to filter by label",
+    "LOAD_EMAIL": "Failed to load email",
+    "DOWNLOAD_ATTACHMENT": "Failed to download attachment",
+    "CLOSE_FILE": "Failed to close file"
+  },
+  "FILE_DIALOG": {
+    "MBOX_FILES": "MBOX Files",
+    "ALL_FILES": "All Files"
+  },
+  "DATE": {
+    "TODAY": "Today",
+    "YESTERDAY": "Yesterday",
+    "DAYS_AGO": "{{count}} days ago"
+  },
+  "LANGUAGE": {
+    "LABEL": "Language",
+    "EN": "English",
+    "ES": "Español"
+  }
+}

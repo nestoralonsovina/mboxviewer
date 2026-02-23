@@ -3,6 +3,7 @@ import { open, save } from '@tauri-apps/plugin-dialog';
 import { writeFile } from '@tauri-apps/plugin-fs';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { MboxApiService } from '../core/tauri/mbox-api.service';
 import { SettingsStoreService } from '../core/store/settings-store.service';
 import { errorMessage } from '../core/utils/error';
@@ -21,6 +22,7 @@ import type {
 export class MboxStateService {
   private readonly api = inject(MboxApiService);
   private readonly settingsStore = inject(SettingsStoreService);
+  private readonly translate = inject(TranslateService);
 
   private readonly _loadingFile = signal(false);
   private readonly _loadingEmails = signal(false);
@@ -117,8 +119,8 @@ export class MboxStateService {
       const selected = await open({
         multiple: false,
         filters: [
-          { name: 'MBOX Files', extensions: ['mbox'] },
-          { name: 'All Files', extensions: ['*'] },
+          { name: this.translate.instant('FILE_DIALOG.MBOX_FILES'), extensions: ['mbox'] },
+          { name: this.translate.instant('FILE_DIALOG.ALL_FILES'), extensions: ['*'] },
         ],
       });
 
@@ -126,7 +128,7 @@ export class MboxStateService {
         await this.loadMbox(selected);
       }
     } catch (err) {
-      this._error.set(`Failed to open file dialog: ${errorMessage(err)}`);
+      this._error.set(`${this.translate.instant('ERRORS.OPEN_DIALOG')}: ${errorMessage(err)}`);
     }
   }
 
@@ -142,7 +144,7 @@ export class MboxStateService {
       await this.addToRecentFiles(path);
       await this.loadEmails();
     } catch (err) {
-      this._error.set(`Failed to open MBOX: ${errorMessage(err)}`);
+      this._error.set(`${this.translate.instant('ERRORS.OPEN_MBOX')}: ${errorMessage(err)}`);
       this._stats.set(null);
       await this.removeFromRecentFiles(path);
     } finally {
@@ -162,7 +164,7 @@ export class MboxStateService {
       this._hasMore.set(stats !== null && emails.length < stats.total_messages);
       this._currentOffset.set(emails.length);
     } catch (err) {
-      this._error.set(`Failed to load emails: ${errorMessage(err)}`);
+      this._error.set(`${this.translate.instant('ERRORS.LOAD_EMAILS')}: ${errorMessage(err)}`);
     } finally {
       this._loadingEmails.set(false);
     }
@@ -191,7 +193,7 @@ export class MboxStateService {
         this._hasMore.set(false);
       }
     } catch (err) {
-      this._error.set(`Failed to load more emails: ${errorMessage(err)}`);
+      this._error.set(`${this.translate.instant('ERRORS.LOAD_MORE')}: ${errorMessage(err)}`);
     } finally {
       this._loadingMore.set(false);
     }
@@ -223,7 +225,7 @@ export class MboxStateService {
       }
     } catch (err) {
       if (searchId === this.currentSearchId) {
-        this._error.set(`Search failed: ${errorMessage(err)}`);
+        this._error.set(`${this.translate.instant('ERRORS.SEARCH')}: ${errorMessage(err)}`);
       }
     } finally {
       if (searchId === this.currentSearchId) {
@@ -245,7 +247,7 @@ export class MboxStateService {
         await this.loadEmails();
       }
     } catch (err) {
-      this._error.set(`Failed to filter by label: ${errorMessage(err)}`);
+      this._error.set(`${this.translate.instant('ERRORS.FILTER_LABEL')}: ${errorMessage(err)}`);
     } finally {
       this._loadingEmails.set(false);
     }
@@ -260,7 +262,7 @@ export class MboxStateService {
       const body = await this.api.getEmailBody(email.index);
       this._selectedEmailBody.set(body);
     } catch (err) {
-      this._error.set(`Failed to load email: ${errorMessage(err)}`);
+      this._error.set(`${this.translate.instant('ERRORS.LOAD_EMAIL')}: ${errorMessage(err)}`);
     } finally {
       this._loadingEmailBody.set(false);
     }
@@ -272,12 +274,13 @@ export class MboxStateService {
   ): Promise<void> {
     try {
       const ext = mimeToExtension(attachment.content_type);
+      const allFilesLabel = this.translate.instant('FILE_DIALOG.ALL_FILES');
       const filters = ext
         ? [
             { name: ext.toUpperCase(), extensions: [ext] },
-            { name: 'All Files', extensions: ['*'] },
+            { name: allFilesLabel, extensions: ['*'] },
           ]
-        : [{ name: 'All Files', extensions: ['*'] }];
+        : [{ name: allFilesLabel, extensions: ['*'] }];
 
       const savePath = await save({
         defaultPath: attachment.filename,
@@ -293,7 +296,7 @@ export class MboxStateService {
       }
     } catch (err) {
       this._error.set(
-        `Failed to download attachment: ${errorMessage(err)}`,
+        `${this.translate.instant('ERRORS.DOWNLOAD_ATTACHMENT')}: ${errorMessage(err)}`,
       );
     }
   }
@@ -309,7 +312,7 @@ export class MboxStateService {
       this._selectedLabel.set(null);
       this._currentPath.set(null);
     } catch (err) {
-      this._error.set(`Failed to close file: ${errorMessage(err)}`);
+      this._error.set(`${this.translate.instant('ERRORS.CLOSE_FILE')}: ${errorMessage(err)}`);
     }
   }
 

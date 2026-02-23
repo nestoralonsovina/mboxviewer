@@ -1,10 +1,11 @@
 import { Component, input, output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'app-error-toast',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, TranslatePipe],
   template: `
     @let msg = message();
     @if (msg) {
@@ -18,7 +19,7 @@ import { IconComponent } from '../icon/icon.component';
           <app-icon name="alert-circle" [size]="18" />
         </div>
         <span class="message">{{ msg }}</span>
-        <button class="btn-dismiss" type="button">Dismiss</button>
+        <button class="btn-dismiss" type="button">{{ 'SHARED.DISMISS' | translate }}</button>
       </div>
     }
   `,

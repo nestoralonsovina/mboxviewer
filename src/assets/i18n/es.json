@@ -1,0 +1,88 @@
+{
+  "APP": {
+    "TITLE": "MBOX Viewer"
+  },
+  "WELCOME": {
+    "TAGLINE": "Abre y explora tus exportaciones de Gmail Takeout con facilidad",
+    "OPENING_FILE": "Abriendo archivo...",
+    "OPEN_BUTTON": "Abrir archivo MBOX"
+  },
+  "RECENT_FILES": {
+    "TITLE": "Archivos recientes",
+    "REMOVE": "Eliminar de la lista"
+  },
+  "SIDEBAR": {
+    "EXPAND": "Expandir barra lateral",
+    "COLLAPSE": "Contraer barra lateral",
+    "OPEN_ANOTHER": "Abrir otro archivo",
+    "CLOSE_FILE": "Cerrar archivo",
+    "ALL_MAIL": "Todo el correo",
+    "LABELS": "Etiquetas",
+    "EMAILS": "correos",
+    "ATTACHMENTS": "adjuntos"
+  },
+  "SEARCH": {
+    "PLACEHOLDER": "Buscar correos...",
+    "FILTERS": "Filtros",
+    "OF": "de",
+    "RESULTS": "resultados",
+    "RESULTS_FOR": "resultados para",
+    "FROM": "De",
+    "FROM_PLACEHOLDER": "remitente@ejemplo.com",
+    "TO": "Para",
+    "TO_PLACEHOLDER": "destinatario@ejemplo.com",
+    "SUBJECT": "Asunto",
+    "SUBJECT_PLACEHOLDER": "Notas de reunión",
+    "CONTENT": "Contenido",
+    "CONTENT_HINT": "(agrega un filtro primero)",
+    "CONTENT_PLACEHOLDER": "Buscar en el cuerpo del correo...",
+    "HAS_ATTACHMENT": "Tiene adjunto"
+  },
+  "EMAIL_LIST": {
+    "LOADING": "Cargando correos...",
+    "LOADING_MORE": "Cargando más...",
+    "NO_EMAILS": "No se encontraron correos",
+    "NO_SUBJECT": "(Sin asunto)"
+  },
+  "EMAIL_DETAIL": {
+    "BACK": "Volver",
+    "NO_SUBJECT": "(Sin asunto)",
+    "TO": "Para:",
+    "MORE": "más",
+    "LOADING": "Cargando...",
+    "NO_CONTENT": "No hay contenido disponible",
+    "SELECT_EMAIL": "Selecciona un correo para ver",
+    "IFRAME_TITLE": "Contenido del correo",
+    "ATTACHMENT": "Adjunto",
+    "ATTACHMENTS": "Adjuntos"
+  },
+  "SHARED": {
+    "DISMISS": "Cerrar",
+    "LOADING": "Cargando"
+  },
+  "ERRORS": {
+    "OPEN_DIALOG": "Error al abrir el diálogo de archivos",
+    "OPEN_MBOX": "Error al abrir MBOX",
+    "LOAD_EMAILS": "Error al cargar correos",
+    "LOAD_MORE": "Error al cargar más correos",
+    "SEARCH": "Error en la búsqueda",
+    "FILTER_LABEL": "Error al filtrar por etiqueta",
+    "LOAD_EMAIL": "Error al cargar correo",
+    "DOWNLOAD_ATTACHMENT": "Error al descargar adjunto",
+    "CLOSE_FILE": "Error al cerrar archivo"
+  },
+  "FILE_DIALOG": {
+    "MBOX_FILES": "Archivos MBOX",
+    "ALL_FILES": "Todos los archivos"
+  },
+  "DATE": {
+    "TODAY": "Hoy",
+    "YESTERDAY": "Ayer",
+    "DAYS_AGO": "Hace {{count}} días"
+  },
+  "LANGUAGE": {
+    "LABEL": "Idioma",
+    "EN": "English",
+    "ES": "Español"
+  }
+}

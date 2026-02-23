@@ -1,5 +1,7 @@
 import { Component, input, output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
+import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
 import { SidebarStatsComponent } from './sidebar-stats.component';
 import { LabelNavComponent } from './label-nav.component';
 import { getFileName } from '../../../core/utils/format';
@@ -8,7 +10,7 @@ import type { LabelCount, MboxStats } from '../../../core/models/mbox.models';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [IconComponent, SidebarStatsComponent, LabelNavComponent],
+  imports: [IconComponent, SidebarStatsComponent, LabelNavComponent, LanguageSwitcherComponent, TranslatePipe],
   templateUrl: './sidebar.component.html',
   host: {
     '[class]': 'hostClasses',

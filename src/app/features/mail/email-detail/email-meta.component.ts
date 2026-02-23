@@ -1,10 +1,12 @@
 import { Component, input } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { formatDate } from '../../../core/utils/format';
 import type { EmailEntry } from '../../../core/models/mbox.models';
 
 @Component({
   selector: 'app-email-meta',
   standalone: true,
+  imports: [TranslatePipe],
   template: `
     @let email = this.email();
     <div class="flex items-start gap-4 mb-6">
@@ -31,12 +33,12 @@ import type { EmailEntry } from '../../../core/models/mbox.models';
           @if (email.to.length > 0) {
             <span class="text-surface-300 dark:text-surface-600">•</span>
             <span class="truncate">
-              To: 
+              {{ 'EMAIL_DETAIL.TO' | translate }} 
               @for (to of email.to.slice(0, 2); track to.address; let last = $last) {
                 {{ to.name || to.address }}@if (!last && email.to.length > 1) {, }
               }
               @if (email.to.length > 2) {
-                <span class="text-surface-400">+{{ email.to.length - 2 }} more</span>
+                <span class="text-surface-400">+{{ email.to.length - 2 }} {{ 'EMAIL_DETAIL.MORE' | translate }}</span>
               }
             </span>
           }

@@ -1,4 +1,9 @@
-<div class="flex items-center justify-center h-screen bg-surface-50 dark:bg-surface-950">
+<div class="flex items-center justify-center h-screen bg-surface-50 dark:bg-surface-950 relative">
+  <!-- Language switcher -->
+  <div class="absolute top-4 right-4">
+    <app-language-switcher />
+  </div>
+
   <!-- Subtle decorative gradient orb -->
   <div class="absolute top-1/4 -left-32 w-96 h-96 bg-gradient-to-br from-accent/20 to-secondary/10 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
   <div class="absolute bottom-1/4 -right-32 w-80 h-80 bg-gradient-to-tl from-secondary/15 to-accent/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
@@ -10,23 +15,23 @@
     </div>
     
     <h1 class="text-4xl font-bold text-surface-900 dark:text-surface-50 mb-3 tracking-tight">
-      MBOX Viewer
+      {{ 'APP.TITLE' | translate }}
     </h1>
     <p class="text-lg text-surface-500 dark:text-surface-400 mb-10 max-w-sm mx-auto">
-      Open and explore your Gmail Takeout exports with ease
+      {{ 'WELCOME.TAGLINE' | translate }}
     </p>
 
     @if (isLoading()) {
       <div class="flex items-center gap-3 text-surface-500 justify-center">
         <app-spinner />
-        <span class="text-sm font-medium">Opening file...</span>
+        <span class="text-sm font-medium">{{ 'WELCOME.OPENING_FILE' | translate }}</span>
       </div>
     } @else {
       <button
         class="group inline-flex items-center gap-2.5 px-7 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-accent to-accent-hover border-none rounded-xl cursor-pointer shadow-accent hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
         (click)="openFile.emit()">
         <app-icon name="folder" [size]="20" />
-        Open MBOX File
+        {{ 'WELCOME.OPEN_BUTTON' | translate }}
       </button>
 
       @if (recentFiles().length > 0) {

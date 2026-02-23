@@ -10,7 +10,7 @@
       (click)="onClose()">
       <app-icon name="arrow-left" [size]="18" />
     </button>
-    <span class="text-sm font-medium text-surface-500">Back</span>
+    <span class="text-sm font-medium text-surface-500">{{ 'EMAIL_DETAIL.BACK' | translate }}</span>
   </div>
 
   <!-- Scrollable content -->
@@ -19,7 +19,7 @@
     <!-- Subject + sender info -->
     <div class="px-6 py-5 border-b border-surface-100 dark:border-surface-800">
       <h1 class="text-lg font-bold text-surface-900 dark:text-surface-50 m-0 mb-4">
-        {{ currentEmail.subject || '(No subject)' }}
+        {{ currentEmail.subject || ('EMAIL_DETAIL.NO_SUBJECT' | translate) }}
       </h1>
       
       <div class="flex items-start gap-3">
@@ -33,7 +33,7 @@
           <div class="text-xs text-surface-500 mt-0.5">
             {{ formattedDate() }}
             @if (currentEmail.to.length > 0) {
-              · To: {{ currentEmail.to[0].name || currentEmail.to[0].address }}
+              · {{ 'EMAIL_DETAIL.TO' | translate }} {{ currentEmail.to[0].name || currentEmail.to[0].address }}
               @if (currentEmail.to.length > 1) {
                 <span class="text-surface-400">+{{ currentEmail.to.length - 1 }}</span>
               }
@@ -64,7 +64,7 @@
     @if (isLoading() && !body) {
       <div class="flex items-center justify-center gap-3 p-12 text-surface-400">
         <app-spinner />
-        <span class="text-sm">Loading...</span>
+        <span class="text-sm">{{ 'EMAIL_DETAIL.LOADING' | translate }}</span>
       </div>
     } @else if (body) {
       @if (sanitizedHtml(); as html) {
@@ -72,10 +72,10 @@
       } @else if (body.text) {
         <div class="p-6 text-sm leading-relaxed text-surface-700 dark:text-surface-300 whitespace-pre-wrap">{{ body.text }}</div>
       } @else {
-        <div class="p-8 text-center text-surface-400 text-sm">No content</div>
+        <div class="p-8 text-center text-surface-400 text-sm">{{ 'EMAIL_DETAIL.NO_CONTENT' | translate }}</div>
       }
     } @else {
-      <div class="p-8 text-center text-surface-400 text-sm">Select an email to view</div>
+      <div class="p-8 text-center text-surface-400 text-sm">{{ 'EMAIL_DETAIL.SELECT_EMAIL' | translate }}</div>
     }
   </div>
 </div>

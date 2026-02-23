@@ -1,4 +1,5 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-spinner',
@@ -9,7 +10,7 @@ import { Component, input } from '@angular/core';
       [style.width.px]="size()"
       [style.height.px]="size()"
       role="status"
-      aria-label="Loading">
+      [attr.aria-label]="ariaLabel">
     </span>
   `,
   styles: `
@@ -37,5 +38,11 @@ import { Component, input } from '@angular/core';
   `,
 })
 export class SpinnerComponent {
+  private readonly translate = inject(TranslateService);
+  
   readonly size = input(18);
+
+  get ariaLabel(): string {
+    return this.translate.instant('SHARED.LOADING');
+  }
 }

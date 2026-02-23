@@ -1,12 +1,13 @@
 import { Component, input, output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import type { LabelCount } from '../../../core/models/mbox.models';
 
 @Component({
   selector: 'app-label-nav',
   standalone: true,
-  imports: [DecimalPipe, IconComponent],
+  imports: [DecimalPipe, TranslatePipe, IconComponent],
   template: `
     <nav class="flex-1 overflow-y-auto p-2">
       <button
@@ -16,13 +17,13 @@ import type { LabelCount } from '../../../core/models/mbox.models';
           : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-50 hover:bg-surface-100 dark:hover:bg-surface-800'"
         (click)="labelClick.emit(null)">
         <app-icon name="mail" [size]="18" />
-        <span class="flex-1">All Mail</span>
+        <span class="flex-1">{{ 'SIDEBAR.ALL_MAIL' | translate }}</span>
         <span class="text-xs font-medium text-surface-400 dark:text-surface-500 tabular-nums">{{ totalMessages() | number }}</span>
       </button>
 
       @if (labels().length > 0) {
         <div class="mt-4 mb-2 px-3">
-          <span class="text-[10px] font-semibold uppercase tracking-widest text-surface-400 dark:text-surface-500">Labels</span>
+          <span class="text-[10px] font-semibold uppercase tracking-widest text-surface-400 dark:text-surface-500">{{ 'SIDEBAR.LABELS' | translate }}</span>
         </div>
       }
 

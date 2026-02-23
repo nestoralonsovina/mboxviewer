@@ -1,4 +1,5 @@
 import { Component, input, output, signal, computed } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 
@@ -13,7 +14,7 @@ interface SearchFields {
 @Component({
   selector: 'app-search-toolbar',
   standalone: true,
-  imports: [IconComponent, SpinnerComponent],
+  imports: [IconComponent, SpinnerComponent, TranslatePipe],
   templateUrl: './search-toolbar.component.html',
 })
 export class SearchToolbarComponent {

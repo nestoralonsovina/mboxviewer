@@ -1,6 +1,6 @@
 <div class="mt-12 text-left w-full max-w-md">
   <h3 class="text-xs font-semibold uppercase tracking-widest text-surface-400 dark:text-surface-500 mt-0 mb-4 px-1">
-    Recent Files
+    {{ 'RECENT_FILES.TITLE' | translate }}
   </h3>
   <ul class="list-none m-0 p-0 space-y-1">
     @for (file of recentFiles(); track file.path) {
@@ -19,7 +19,7 @@
         <button 
           class="flex items-center justify-center w-8 h-8 mr-1 p-0 bg-transparent border-none rounded-lg text-surface-400 cursor-pointer opacity-0 group-hover:opacity-100 hover:bg-surface-200 dark:hover:bg-surface-700 hover:text-danger transition-all" 
           (click)="onRemove(file.path, $event)" 
-          title="Remove from list">
+          [title]="'RECENT_FILES.REMOVE' | translate">
           <app-icon name="close" [size]="14" />
         </button>
       </li>

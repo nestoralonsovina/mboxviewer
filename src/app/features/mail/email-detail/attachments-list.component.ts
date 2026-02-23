@@ -1,4 +1,5 @@
 import { Component, input, output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { formatFileSize } from '../../../core/utils/format';
 import type { AttachmentInfo } from '../../../core/models/mbox.models';
@@ -6,14 +7,14 @@ import type { AttachmentInfo } from '../../../core/models/mbox.models';
 @Component({
   selector: 'app-attachments-list',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, TranslatePipe],
   template: `
     @let items = attachments();
     @if (items.length > 0) {
       <div class="mb-6">
         <h3 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-surface-500 dark:text-surface-400 m-0 mb-3">
           <app-icon name="attachment" [size]="14" />
-          {{ items.length }} Attachment{{ items.length > 1 ? 's' : '' }}
+          {{ items.length }} {{ items.length > 1 ? ('EMAIL_DETAIL.ATTACHMENTS' | translate) : ('EMAIL_DETAIL.ATTACHMENT' | translate) }}
         </h3>
         <div class="flex flex-wrap gap-2">
           @for (attachment of items; track attachment.part_index) {

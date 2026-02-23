@@ -18,6 +18,8 @@
     "@angular/core": "^20.1.4",
     "@angular/forms": "^20.1.4",
     "@angular/platform-browser": "^20.1.4",
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
     "@tailwindcss/postcss": "^4.2.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2.6.0",
