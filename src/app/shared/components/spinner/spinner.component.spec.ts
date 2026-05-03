@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { describe, it, expect, beforeEach } from 'vitest';
+import { TranslateService } from '@ngx-translate/core';
 import { SpinnerComponent } from './spinner.component';
 
 @Component({
@@ -37,6 +38,10 @@ describe('SpinnerComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TestHostComponent],
+      providers: [{
+        provide: TranslateService,
+        useValue: { instant: (key: string) => key },
+      }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestHostComponent);
@@ -86,6 +91,6 @@ describe('SpinnerComponent', () => {
 
   it('has aria-label for screen readers', () => {
     const span = getSpinnerSpan(fixture);
-    expect(span.getAttribute('aria-label')).toBe('Loading');
+    expect(span.getAttribute('aria-label')).toBe('SHARED.LOADING');
   });
 });

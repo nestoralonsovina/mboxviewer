@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { TranslateService } from '@ngx-translate/core';
+import { of, Subject } from 'rxjs';
 import { ErrorToastComponent } from './error-toast.component';
 
 @Component({
@@ -33,6 +35,18 @@ describe('ErrorToastComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TestHostComponent],
+      providers: [{
+        provide: TranslateService,
+        useValue: {
+          instant: (key: string) => key,
+          get: (key: string) => of(key),
+          onTranslationChange: new Subject(),
+          onLangChange: new Subject(),
+          onFallbackLangChange: new Subject(),
+          getCurrentLang: () => 'en',
+          getFallbackLang: () => null,
+        },
+      }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestHostComponent);
@@ -118,6 +132,6 @@ describe('ErrorToastComponent', () => {
     if (!(el instanceof HTMLElement)) {
       throw new Error('Expected nativeElement to be an HTMLElement');
     }
-    expect(el.textContent?.trim()).toBe('Dismiss');
+    expect(el.textContent?.trim()).toBe('SHARED.DISMISS');
   });
 });
