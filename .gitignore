@@ -41,5 +41,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Ralph Wiggum loop state
+# AI/dev tooling state
 .ralph/
+prompt.md
+spec.md
+ralph-loop.sh

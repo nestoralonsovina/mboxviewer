@@ -14,18 +14,31 @@ MBOX Viewer is a desktop application for viewing Gmail Takeout exports and other
 ## Architecture
 
 ```
-src/                          # Angular frontend
+src/                          # Angular 20 frontend
 ├── app/
-│   ├── app.component.*       # Main app component (welcome screen + mail client UI)
-│   ├── services/
-│   │   └── mbox.service.ts   # Service for Tauri IPC communication
-│   └── app.routes.ts         # Router config (currently unused)
-├── styles.css                # Global styles
+│   ├── core/
+│   │   ├── models/           # Domain types (EmailEntry, MboxStats, ...)
+│   │   ├── tauri/            # Tauri IPC service layer
+│   │   ├── store/            # Settings persistence
+│   │   ├── services/         # Window service
+│   │   └── utils/            # Pure formatting functions
+│   ├── features/
+│   │   ├── mail/             # Mail client (shell, list, detail, toolbar)
+│   │   ├── welcome/          # Welcome screen + recent files
+│   │   └── preferences/      # Settings page
+│   └── app.routes.ts         # Router config
+├── styles.css                # Global styles + Tailwind theme
 └── main.ts                   # Bootstrap
 
-src-tauri/                    # Tauri/Rust backend
+src-tauri/                    # Tauri 2 / Rust backend
 ├── src/
-│   ├── lib.rs                # Tauri commands and app state
+│   ├── commands/mbox.rs      # Thin Tauri command wrappers
+│   ├── services/mbox_service.rs  # Business logic (zero Tauri deps)
+│   ├── models/               # IPC data transfer objects
+│   ├── error.rs              # AppError enum with thiserror
+│   ├── state.rs              # AppState management
+│   ├── menu.rs               # Native menu setup
+│   ├── lib.rs                # Tauri Builder setup only (~40 lines)
 │   └── main.rs               # Entry point
 ├── Cargo.toml                # Rust dependencies
 ├── tauri.conf.json           # Tauri configuration
@@ -36,24 +49,30 @@ src-tauri/                    # Tauri/Rust backend
 
 ```bash
 # Install dependencies
-bun install
+bun install                     # or: make install
 
-# Run in development mode
-bun run tauri dev
+# Development
+make dev                        # bun run tauri dev
+make check                      # cargo check (fast compile check)
 
-# Build for production
-bun run tauri build
+# Testing
+make test                       # vitest + cargo test
 
-# Check Rust code
-cd src-tauri && cargo check
+# Linting
+make lint                       # eslint + clippy
 
-# Build Angular only
-bun run build
+# Production
+make build                      # bun run tauri build
+
+# Clean
+make clean                      # remove dist/ + cargo clean
 ```
+
+Full Makefile targets: `install`, `dev`, `build`, `lint`, `test`, `check`, `clean`
 
 ## Tauri Commands (Backend API)
 
-All commands are defined in `src-tauri/src/lib.rs`:
+All commands are thin wrappers in `src-tauri/src/commands/mbox.rs` delegating to `services/mbox_service.rs`:
 
 | Command | Description |
 |---------|-------------|
@@ -119,8 +138,10 @@ term1 OR term2              # OR search
 
 ## Testing
 
-Currently no automated tests. Manual testing:
+- **Frontend**: `bun run test` (Vitest) — unit tests in `src/app/core/utils/`
+- **Backend**: `cargo test` (no backend tests yet — services are pure Rust and testable without Tauri)
 
+Manual verification:
 1. Open a `.mbox` file (Gmail Takeout export works well)
 2. Verify email list loads with correct sender/subject/date
 3. Click an email to view body and attachments

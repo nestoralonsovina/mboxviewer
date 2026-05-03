@@ -29,11 +29,17 @@
         <div class="min-w-0">
           <div class="text-sm font-semibold text-surface-900 dark:text-surface-50">
             {{ currentEmail.from_name || currentEmail.from_address }}
+            @if (currentEmail.from_name && currentEmail.from_address) {
+              <span class="font-normal text-surface-500">&lt;{{ currentEmail.from_address }}&gt;</span>
+            }
           </div>
           <div class="text-xs text-surface-500 mt-0.5">
             {{ formattedDate() }}
             @if (currentEmail.to.length > 0) {
               · {{ 'EMAIL_DETAIL.TO' | translate }} {{ currentEmail.to[0].name || currentEmail.to[0].address }}
+              @if (currentEmail.to[0].name && currentEmail.to[0].address) {
+                &lt;{{ currentEmail.to[0].address }}&gt;
+              }
               @if (currentEmail.to.length > 1) {
                 <span class="text-surface-400">+{{ currentEmail.to.length - 1 }}</span>
               }
